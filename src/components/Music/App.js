@@ -16,11 +16,25 @@ const APP_ID = '4966083';
     player: state.player,
     playlist: state.playlist,
     albums: state.albums,
-    session: state.session,
-    user: state.user
+    session: state.session
   };
 }, actionCreators)
-export default class MusicApp extends Component {
+class App extends Component {
+
+  appendScript() {
+    let el;
+    let transport;
+
+    transport = document.getElementById('vk-api-transport');
+    el = document.createElement('script');
+    el.type = 'text/javascript';
+    el.src = '//vk.com/js/api/openapi.js';
+    el.async = true;
+
+    if (transport) {
+      transport.appendChild(el);
+    }
+  }
 
   componentDidMount() {
     const { vkInit } = this.props;
@@ -67,9 +81,7 @@ export default class MusicApp extends Component {
                 <div className="music__navbar-btn">
                   <i className="glyphicon glyphicon-th-list"></i>
                 </div>
-                <div className="music__navbar-btn">
-                  {loginBtn}
-                </div>
+                <div className="music__navbar-btn">{loginBtn}</div>
               </div>
               <div className="music__navbar-center">
                 <Player player={player}
@@ -103,19 +115,6 @@ export default class MusicApp extends Component {
       </section>
     );
   }
-
-  appendScript() {
-    let el;
-    let transport;
-
-    transport = document.getElementById('vk-api-transport');
-    el = document.createElement('script');
-    el.type = 'text/javascript';
-    el.src = '//vk.com/js/api/openapi.js';
-    el.async = true;
-
-    if (transport) {
-      transport.appendChild(el);
-    }
-  }
 }
+
+export default App;

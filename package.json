@@ -11,6 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "babel": "5.8.21",
+    "bluebird": "^2.10.0",
+    "flux-standard-action": "^0.6.0",
     "gemini-scrollbar": "^1.2.9",
     "holderjs": "^2.8.2",
     "immutable": "^3.7.4",

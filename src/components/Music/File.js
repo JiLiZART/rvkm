@@ -22,7 +22,7 @@ export default class File extends Component {
      url: "https://psv4.vk.me/c613820/u207424424/audios/1cc560c914fe.mp3?extra=nNCreCtwYjk_IwRnIrAAy7KsH1LwXKbwLam9alGut8sxOtAUiB1GRMR6lUoJbFZWXkiHytkv2j_meVU8wiojkkg7Om5_ZDI"
      */
     return (
-      <li className="list-group-item" onClick={this.handleClick.bind(this)}>
+      <li className="music__playlist-item list-group-item" onClick={this.handleClick.bind(this)}>
         {state}&nbsp;{file.get('title')}&nbsp;&mdash;&nbsp;{file.get('artist')}
       </li>
     );

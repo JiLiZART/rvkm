@@ -120,17 +120,21 @@ export default class Player extends Component {
     this.props.onMuteClick();
   }
 
+  handlePrevClick() {
+    this.props.onPrevClick();
+  }
+
+  handleNextClick() {
+    this.props.onNextClick();
+  }
+
   handleFileEnd() {
-    this.props.onFileEnd();
+    this.props.onEnd();
   }
 
   render() {
-    const { player } = this.props;
-    const current = player.get('current');
-    const file = current.get('file');
-    const url = file.get('url');
-    const playing = current.get('playing', false);
-    const muted = current.get('muted', false);
+    const player = this.props.player.toJS();
+    const { current: { file: { url }, playing, muted } } = player;
 
     let mutedIcon = (<i className="music__player-icon glyphicon glyphicon-volume-up"></i>);
 
@@ -158,11 +162,12 @@ export default class Player extends Component {
       return (
         <div class="music__player">
           <div className="music__player-btn music__player-btn_name_prev"
-              onClick={this.handlePrevClick.bind(this)}>
+               onClick={this.handlePrevClick.bind(this)}>
             <i className="music__player-icon glyphicon glyphicon-backward"></i>
           </div>
           {playBtn}
-          <div className="music__player-btn music__player-btn_name_next">
+          <div className="music__player-btn music__player-btn_name_next"
+               onClick={this.handleNextClick.bind(this)}>
             <i className="music__player-icon glyphicon glyphicon-forward"></i>
           </div>
           <div className="music__player-btn music__player-btn_name_mute"

@@ -1,24 +1,25 @@
 import React, { Component } from 'react';
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
-import thunk from 'redux-thunk';
+import thunkMiddleware from './middlewares/thunkMiddleware.js';
 import promiseMiddleware from 'redux-promise';
 import { Provider } from 'react-redux';
 
 import * as reducers from './reducers';
 import Routes from './Routes.js';
 
+console.log('reducers', reducers);
 let finalCreateStore;
 
 if (__DEVTOOLS__) {
   const { devTools } = require('redux-devtools');
   finalCreateStore = compose(
-    applyMiddleware(thunk, promiseMiddleware),
+    applyMiddleware(promiseMiddleware, thunkMiddleware),
     devTools(),
     createStore
   );
 } else {
   finalCreateStore = compose(
-    applyMiddleware(thunk, promiseMiddleware),
+    applyMiddleware(promiseMiddleware, thunkMiddleware),
     createStore
   );
 }

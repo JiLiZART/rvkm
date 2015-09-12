@@ -1,194 +1,93 @@
-import {
-  VK_INIT,
-  SESSION_START,
-  USER_LOGOUT_SUCCESS,
+import { createAction } from 'redux-actions';
+import Service from '../services/VK.js';
+import Promise from 'bluebird';
 
-  PLAYLIST_USER_RECEIVED,
-  PLAYLIST_USER_PENDING,
+export const playlistStart = createAction('PLAYLIST_START');
+export const playlistSuccess = createAction('PLAYLIST_SUCCESS', function getPlaylistSuccess(items = [], count = 0) {
+  return { items, count }
+});
 
-  ALBUMS_USER_RECEIVED,
-  ALBUMS_USER_PENDING,
-
-  PLAYER_PLAY,
-  PLAYER_PAUSE,
-
-  PLAYER_PROGRESS,
-  PLAYER_NEXT,
-  PLAYER_PREV,
-  PLAYER_LOAD,
-  PLAYER_MUTE_TOGGLE,
-  PLAYER_END
-} from '../constants/ActionTypes';
-
-const API_VERSION = '5.37';
-
-export function playlistUserReceived(items = [], count = 0) {
-  return {
-    type: PLAYLIST_USER_RECEIVED,
-    payload: {
-      user: items,
-      count
-    }
-  };
-}
-
-export function playlistUserPending() {
-  return {
-    type: PLAYLIST_USER_PENDING
-  };
-}
-
-export function playlistUser(userID) {
+export function playlistFetch(userID) {
   return (dispatch) => {
-    dispatch(playlistUserPending());
+    dispatch(playlistStart());
 
-    VK.Api.call('audio.get', {
-      v: API_VERSION,
-      owner_id: userID
-    }, (r) => {
-      if (r.response && r.response.items) {
-        dispatch(playlistUserReceived(r.response.items, r.response.count));
+    Service.User.getPlaylist(userID).then((r) => {
+      dispatch(playlistSuccess(r.items, r.count));
+    });
+  };
+}
+
+export const albumsStart = createAction('ALBUMS_START');
+export const albumsSuccess = createAction('ALBUMS_SUCCESS', function getAlbumsSuccess(items = [], count = 0) {
+  return { items, count };
+});
+
+export function albumsFetch(userID) {
+  return (dispatch) => {
+    dispatch(albumsStart());
+
+    Service.User.getAlbums(userID).then((response) => {
+      if (response.items) {
+        dispatch(albumsSuccess(response.items, response.count));
+        dispatch(playlistFetch(userID));
       }
     });
   };
 }
 
-export function albumsUserReceived(items = [], count = 0) {
-  return {
-    type: ALBUMS_USER_RECEIVED,
-    payload: {
-      user: items,
-      count
-    }
-  }
-}
-
-export function albumsUserPending() {
-  return {
-    type: ALBUMS_USER_PENDING
-  };
-}
-
-export function albumsUser(userID) {
-  return (dispatch) => {
-    dispatch(albumsUserPending());
-
-    VK.Api.call('audio.getAlbums', {
-      v: API_VERSION,
-      owner_id: userID
-    }, (r) => {
-      if (r.response && r.response.items) {
-        dispatch(albumsUserReceived(r.response.items, r.response.count));
-        dispatch(playlistUser(userID));
-      }
-    });
-  };
-}
-
-export function vkInit(instance) {
+export const vkInit = createAction('VK_INIT', () => {
   return (dispatch) => {
     dispatch(init());
     dispatch(sessionCheckStatus());
   };
-}
+});
 
-export function init() {
-  return {
-    type: VK_INIT
-  };
-}
+export const init = createAction('INIT');
+export const sessionStart = createAction('SESSION_START', session => session);
 
-export function sessionStart(session) {
-  return {
-    type: SESSION_START,
-    payload: session
-  };
-}
+export const userLoginStart = createAction('USER_LOGIN_START');
+export const userLoginSuccess = createAction('USER_LOGIN_SUCCESS');
 
 export function userLogin() {
   return (dispatch) => {
-    VK.Auth.login((response) => {
-      if (response.session) {
-        dispatch(sessionStart(response.session));
-        dispatch(albumsUser(response.session.mid));
-      }
-    }, VK.access.AUDIO);
+    dispatch(userLoginStart());
+
+    Service.User.login().then((session) => {
+      dispatch(userLoginSuccess());
+
+      dispatch(sessionStart(session));
+      dispatch(albumsFetch(session.mid));
+    }, console.error.bind(console));
   };
 }
+
+export const userLogoutStart = createAction('USER_LOGOUT_START');
+export const userLogoutSuccess = createAction('USER_LOGOUT_SUCCESS');
 
 export function userLogout() {
   return (dispatch) => {
-    VK.Auth.logout((response) => {
-      dispatch(userLogoutSuccess());
-      window.location.reload();
-    });
-  };
-}
+    dispatch(userLogoutStart());
 
-export function userLogoutSuccess() {
-  return {
-    type: USER_LOGOUT_SUCCESS
-  }
+    Service.User.logout().then(() => {
+      dispatch(userLogoutSuccess());
+    }, console.error.bind(console));
+  };
 }
 
 export function sessionCheckStatus() {
   return (dispatch) => {
-    VK.Auth.getLoginStatus((response) => {
-      if (response.session) {
-        dispatch(sessionStart(response.session));
-        dispatch(albumsUser(response.session.mid));
-      }
-    })
+    Service.User.sessionCheck().then((session) => {
+        dispatch(sessionStart(session));
+        dispatch(albumsFetch(session.mid));
+    }, console.error.bind(console))
   };
 }
 
-export function playerLoad(file) {
-  console.log('playerLoad(file)', file);
-  return {
-    type: PLAYER_LOAD,
-    payload: file
-  };
-}
-
-export function playerPlay() {
-  return {
-    type: PLAYER_PLAY
-  };
-}
-
-export function playerPause() {
-  return {
-    type: PLAYER_PAUSE
-  };
-}
-
-export function playerProgress(e) {
-  return {
-    type: PLAYER_PROGRESS,
-    payload: e
-  };
-}
-
-export function playerNext() {
-  return {
-    type: PLAYER_NEXT
-  };
-}
-
-export function playerPrev() {
-  return {
-    type: PLAYER_PREV
-  };
-}
-
-export function playerMuteToggle() {
-  return {
-    type: PLAYER_MUTE_TOGGLE
-  };
-}
-
-export function playerEnd() {
-  return {
-    type: PLAYER_END
-  };
-}
+export const playerLoad = createAction('PLAYER_LOAD', file => file);
+export const playerPlay = createAction('PLAYER_PLAY');
+export const playerPause = createAction('PLAYER_PAUSE');
+export const playerProgress = createAction('PLAYER_PROGRESS', e => e);
+export const playerNext = createAction('PLAYER_NEXT');
+export const playerPrev = createAction('PLAYER_PREV');
+export const playerMuteToggle = createAction('PLAYER_MUTE_TOGGLE');
+export const playerEnd = createAction('PLAYER_END');

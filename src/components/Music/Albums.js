@@ -4,8 +4,7 @@ import Holder from 'holderjs';
 export default class Albums extends Component {
 
   renderAlbum(album, index) {
-    const title = album.get('title');
-    const count = album.get('count');
+    const { title, count } = album;
 
     return (
       <li className="music__albums-item" role="album" key={index}>
@@ -28,11 +27,16 @@ export default class Albums extends Component {
   }
 
   render() {
-    const { albums } = this.props;
     let content = 'Loading...';
 
-    if (!albums.get('pending', false)) {
-      content = albums.getIn(['user', 'items']).map(this.renderAlbum.bind(this));
+    if (this.props.albums) {
+      const albums = this.props.albums.toJS();
+
+      if (!albums.pending && albums.items) {
+        content = Object.keys(albums.items).map((key) => {
+          return this.renderAlbum(albums.items[key]);
+        });
+      }
     }
 
     return (

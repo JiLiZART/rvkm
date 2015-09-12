@@ -10,14 +10,12 @@ export default class List extends Component {
     const { playlist, player, onFileClick } = this.props;
     const currentID = player.getIn(['current', 'id'], 0);
     const pending = playlist.get('pending', false);
-    const files = playlist.getIn(['user', 'files']);
+    const files = playlist.getIn(['current', 'files']);
     let content = null;
 
     if (pending) {
       content = 'Loading...';
     }
-
-    console.log('files', files);
 
     if (files && files.size) {
       content = files.map(this.renderFile.bind(this, onFileClick, currentID));
@@ -36,7 +34,7 @@ export default class List extends Component {
 
     return (
       <div className="music__playlist">
-        <ul className="list-group">
+        <ul className="music__playlist-items list-group">
           {content}
         </ul>
       </div>
