@@ -1,5 +1,5 @@
 import { createAction } from 'redux-actions';
-import Service from '../services/VK.js';
+import Service from '../services';
 import Promise from 'bluebird';
 
 export const playlistStart = createAction('PLAYLIST_START');

@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 
 const API_VERSION = '5.37';
 
-class Api {
+export default class Api {
   static getLoginStatus(force) {
     return new Promise((fulfill, reject) => {
       VK.Auth.getLoginStatus((r) => {
@@ -54,46 +54,4 @@ class Api {
       });
     });
   }
-}
-
-class User {
-  static login() {
-    return Api.login(VK.access.AUDIO)
-  }
-
-  static logout() {
-    return Api.logout()
-  }
-
-  static sessionCheck() {
-    return Api.getLoginStatus();
-  }
-
-  static sessionStart(session) {
-    return session;
-  }
-
-  static getAlbums(userID) {
-    return Api.call('audio.getAlbums', {owner_id: userID});
-  }
-
-  static getPlaylist(userID) {
-    return Api.call('audio.get', {owner_id: userID})
-  }
-}
-
-class Player {
-  static load(file) {
-    return file;
-  }
-
-  static progress(e) {
-    return e;
-  }
-}
-
-export default {
-  Api,
-  User,
-  Player
 }

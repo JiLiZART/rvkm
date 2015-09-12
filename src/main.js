@@ -7,7 +7,6 @@ import { Provider } from 'react-redux';
 import * as reducers from './reducers';
 import Routes from './Routes.js';
 
-console.log('reducers', reducers);
 let finalCreateStore;
 
 if (__DEVTOOLS__) {
