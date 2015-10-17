@@ -8,9 +8,7 @@ export default class Scrollable extends Component {
 
     return (
       <section className="scrollable">
-        <GeminiScrollbar>
-          {children}
-        </GeminiScrollbar>
+        {children}
       </section>
     );
   }

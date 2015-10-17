@@ -1,21 +1,15 @@
 import React, { Component } from 'react';
-// import { Link } from 'react-router';
-import { App } from 'components/Music';
+import { App } from 'components';
 
 const styles = require('styles/music.styl');
 
 export default class IndexPage extends Component {
-
-  componentWillMount() {
-    // styles.use();
-  }
-
-  componentWillUnmount() {
-    // styles.unuse();
-  }
-
   render() {
-    return (<App />);
+    const { audioContext } = this.props.route;
+
+    console.log('route', this.props);
+
+    return (<App audioContext={audioContext} />);
   }
 }
 

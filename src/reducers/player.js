@@ -1,65 +1,70 @@
 import { fromJS } from 'immutable';
 import { handleActions } from 'redux-actions';
 
-const playerState = fromJS({
-  current: {
-    file: {url: ''},
-    time: 0,
-    duration: 0,
-    playing: false,
-    muted: false
-  }
+const defaultState = fromJS({
+  playing: false,
+  position: null,
+  volume: 0,
+  time: 0,
+  progress: 0,
+  buffer: 0,
+  duration: 0,
+  id: 0,
+  file: null
 });
 
 export default handleActions({
   PLAYER_LOAD: (state, action) => {
-    return state.mergeDeep({
-      current: {
-        playing: true,
-        file: action.payload,
-        duration: action.payload.get('duration'),
-        id: action.payload.get('id')
-      }
+    const { payload } = action;
+
+    return state.merge({
+      playing: true,
+      file: payload,
+      duration: payload.duration,
+      id: payload.id
+    });
+  },
+  PLAYER_SEEK: (state, action) => {
+    return state.merge({
+      position: action.payload
+    });
+  },
+  PLAYER_SEEK_END: (state, action) => {
+    return state.merge({
+      position: null
     });
   },
   PLAYER_PLAY: (state, action) => {
-    return state.mergeDeep({
-      current: {
-        playing: true
-      }
+    return state.merge({
+      playing: true
     });
   },
   PLAYER_PAUSE: (state, action) => {
-    return state.mergeDeep({
-      current: {
-        playing: false
-      }
-    });
-  },
-  PLAYER_PROGRESS: (state, action) => {
-    let duration = state.getIn(['current', 'duration']);
-    let time = duration - Math.round(action.payload.currentTime);
-
-    return state.mergeDeep({
-      current: {
-        time: time
-      }
+    return state.merge({
+      playing: false
     });
   },
   PLAYER_END: (state, action) => {
-    return state.mergeDeep({
-      current: {
-        playing: false,
-        time: 0,
-        duration: 0
-      }
+    return state.merge({
+      playing: false,
+      time: 0,
+      duration: 0
     });
   },
-  PLAYER_MUTE_TOGGLE: (state, action) => {
-    return state.mergeDeep({
-      current: {
-        muted: !state.getIn(['current', 'muted'], true)
-      }
+  PLAYER_VOLUME: (state, action) => {
+    const { payload } = action;
+
+    return state.merge({
+      volume: payload
+    });
+  },
+  PLAYER_PROGRESS: (state, action) => {
+    const { payload } = action;
+
+    return state.merge({
+      time: payload.time,
+      progress: payload.progress,
+      buffer: payload.buffer
     });
   }
-}, playerState);
+}, defaultState);

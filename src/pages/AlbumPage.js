@@ -1,22 +1,12 @@
 import React, { Component } from 'react';
-import { App } from 'components/Music';
+import { App } from 'components';
 
-// const styles = require('style/useable!css!todomvc-app-css/index.css');
+const styles = require('styles/music.styl');
+
 export default class AlbumPage extends Component {
-
-  componentWillMount() {
-    // styles.use();
-  }
-
-  componentWillUnmount() {
-    // styles.unuse();
-  }
-
   render() {
-    return (
-      <div>
-        <App />
-      </div>
-    );
+    const { audioContext } = this.props.route;
+
+    return (<App audioContext={audioContext} />);
   }
 }

@@ -1,0 +1,69 @@
+.player
+  position relative
+  color #fff
+  background #5b5d5f
+  text-align center
+  width 320px
+
+  &__info
+    min-height 100px
+    width 100%
+    background rgba(#000, 0.8);
+    text-align center;
+    position: relative;
+
+  &__title
+    font-size: 22px;
+    font-weight: 300;
+    text-decoration: none;
+
+  &__artist
+    font-size: 12px;
+    display: block;
+    margin-top: 10px;
+
+  &__left
+  &__right
+    width: 25px;
+    position: absolute;
+    top: 30px;
+    left: 10px;
+
+  &__right
+    left: auto;
+    right: 10px;
+
+  &__center
+    padding: 20px 20px 0;
+
+  &__controls
+    text-align: center;
+    width: 100%;
+    background: #567ca4;
+
+  &__controls &__icon
+    display: inline-block;
+    width: 35px;
+    height: 40px;
+    margin: 0 30px;
+
+    &_name_play
+    &_name_pause
+      font-size 40px
+
+    &_name_prev
+    &_name_next
+      font-size 30px
+
+  &__current-time
+    font-size: 48px;
+    color: rgba(225, 225, 225, 0.4);
+    padding: 15px 0 20px;
+
+  &__volume-level
+    position: relative;
+    bottom: auto;
+    width: 200px;
+    height: 2px;
+    margin: 30px auto 0;
+    background: rgba(225, 225, 225, 0.3)

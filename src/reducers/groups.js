@@ -9,12 +9,12 @@ const defaultState = fromJS({
 });
 
 export default handleActions({
-  ALBUMS_START: (state, action) => {
+  GROUPS_START: (state) => {
     return state.merge({
       fetching: true
     });
   },
-  ALBUMS_SUCCESS: (state, action) => {
+  GROUPS_SUCCESS: (state, action) => {
     const { payload } = action;
 
     return state.merge({
@@ -24,7 +24,7 @@ export default handleActions({
       count: payload.length
     });
   },
-  ALBUMS_ERROR: (state , action) => {
+  GROUPS_ERROR: (state , action) => {
     const { payload } = action;
 
     return state.merge({

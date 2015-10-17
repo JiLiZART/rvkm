@@ -2,7 +2,11 @@ import { fromJS } from 'immutable';
 import { handleActions } from 'redux-actions';
 
 const playlistState = fromJS({
-  pending: true, albums: {0: []}, count: 0, current: {id:0}
+  pending: false,
+  items: [],
+  count: 0,
+  id: 0,
+  title: ''
 });
 
 export default handleActions({
@@ -11,32 +15,14 @@ export default handleActions({
       pending: true
     });
   },
-  PLAYLIST_SUCCESS: (state, action) => {
-    let noAlbumFiles = action.payload.items.filter((audio) => !audio.album_id);
-    let albumFiles = action.payload.items.filter((audio) => audio.album_id);
-    let albums = {
-      0: {
-        files: noAlbumFiles,
-        count: noAlbumFiles.length
-      }
-    };
+  PLAYLIST_LOAD: (state, action) => {
+    const { payload } = action;
 
-    albumFiles
-      .map((audio) => audio.album_id)
-      .filter((albumID, idx, arr) => arr.indexOf(albumID) === idx)
-      .forEach((albumID) => {
-        let files = albumFiles.filter((audio) => audio.album_id == albumID);
-        albums[albumID] = {
-          files,
-          count: files.length
-        };
-      });
-
-    return state.mergeDeep({
+    return state.merge({
       pending: false,
-      count: action.payload.count,
-      albums: albums,
-      current: albums[state.getIn(['current', 'id'])]
+      items: payload.items,
+      count: payload.count,
+      id: payload.id
     });
   }
 }, playlistState);

@@ -86,7 +86,7 @@ module.exports = {
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
       __DEVELOPMENT__: true,
-      __DEVTOOLS__: false  // <-------- DISABLE redux-devtools HERE
+      __DEVTOOLS__: true  // <-------- DISABLE redux-devtools HERE
     }),
     //new BowerWebpackPlugin()
   ]

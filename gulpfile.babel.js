@@ -35,8 +35,8 @@ gulp.task('bundle:dist', (cb) => {
 
 gulp.task('assets', (cb) => {
   return gulp.src('src/public/**')
-    .pipe(gulp.dest('dist/')).
-    pipe($.size({title: 'assets'}));
+    .pipe(gulp.dest('dist/'))
+    .pipe($.size({title: 'assets'}));
 });
 
 gulp.task('build', ['clean'], (cb) => {

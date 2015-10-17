@@ -1,0 +1,56 @@
+.timeline
+  background #e6e6e6
+  position relative
+  color #fff
+  height 22px
+  font-size 12px
+  line-height 22px
+  text-align center
+
+  &__trail
+    position relative
+
+  &__buffer,
+  &__seek,
+  &__progress
+    position absolute
+    top 0
+    left 0
+    height 22px
+    width 0
+
+  &__buffer
+    transform translateZ(0)
+    background #dadada
+
+  &__seek
+    opacity 0
+    transform translateZ(0)
+    transition opacity 0.4s
+    background #2aa0e6
+
+    .{$ctx}:hover &,
+    &:hover
+      opacity 0.4
+
+  &__progress
+    transform translateZ(0)
+    overflow hidden
+    background #2aa0e6
+
+  &__info
+    position relative
+    color #515151
+
+  &__progress &__info
+    color #fff
+
+  &__time
+    position absolute
+    top 0
+    left 12px
+
+  &__length
+    position absolute
+    top 0
+    right 20px
