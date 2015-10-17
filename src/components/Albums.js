@@ -29,7 +29,6 @@ export default class Albums extends Component {
           <ListItem
             disabled={item.id === playlist.id}
             primaryText={item.title}
-            rightIcon={<SvgIcon>{item.count}</SvgIcon>}
             key={key}
             onClick={() => this.handleItemClick(item)}
             />

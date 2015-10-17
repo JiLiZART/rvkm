@@ -19,8 +19,9 @@ export default class Groups extends Component {
     if (!error && !fetching) {
       content = Object.keys(items).map((key) => {
         const item = items[key];
+        const avatar = (<Avatar src={item.avatar} />);
 
-        return (<ListItem leftAvatar={<Avatar src={item.avatar} />} primaryText={item.title} key={key} />)
+        return (<ListItem leftAvatar={avatar} primaryText={item.title} />)
       });
     }
 

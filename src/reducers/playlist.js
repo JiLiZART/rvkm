@@ -22,7 +22,8 @@ export default handleActions({
       pending: false,
       items: payload.items,
       count: payload.count,
-      id: payload.id
+      id: payload.id,
+      title: payload.title
     });
   }
 }, playlistState);

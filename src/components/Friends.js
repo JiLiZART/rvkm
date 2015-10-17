@@ -20,7 +20,7 @@ export default class Friends extends Component {
       content = Object.keys(items).map((key) => {
         const item = items[key];
 
-        return (<ListItem leftAvatar={<Avatar src={item.avatar} />} primaryText={item.title} key={key} />)
+        return (<ListItem leftAvatar={<Avatar src={item.avatar} />} primaryText={item.title} />)
       });
     }
 

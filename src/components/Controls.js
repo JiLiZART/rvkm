@@ -1,4 +1,10 @@
 import React, { Component } from 'react';
+import { Slider } from 'material-ui';
+import PlayIcon from 'material-ui/lib/svg-icons/av/play-arrow';
+import PauseIcon from 'material-ui/lib/svg-icons/av/pause';
+import VolumeMuteIcon from 'material-ui/lib/svg-icons/av/volume-mute';
+import VolumeOffIcon from 'material-ui/lib/svg-icons/av/volume-off';
+import IconButton from 'material-ui/lib/icon-button';
 import moment from 'moment';
 import momentDuration from 'moment-duration-format';
 
@@ -26,30 +32,25 @@ export default class Controls extends Component {
     const currentVolume = currentPlayer.get('volume');
     const currentPlaying = currentPlayer.get('playing');
 
-    if (this.audio) {
+    if (nextFileUrl !== currentFileUrl) {
+      this.setSrcAndPlay(nextFileUrl);
+    }
 
-      console.log('current, next', currentFileUrl, nextFileUrl);
+    if (nextVolume !== currentVolume) {
+      this.volume(nextVolume);
+    }
 
-      if (nextFileUrl !== currentFileUrl) {
-        this.setSrcAndPlay(nextFileUrl);
-      }
+    if (nextPlaying !== currentPlaying) {
+      nextPlaying ? this.play() : this.pause();
+    }
 
-      if (nextVolume !== currentVolume) {
-        this.volume(nextVolume);
-      }
+    if (nextPosition > 0) {
+      const startRange = this.audio.seekable.start(0);
+      const endRange = this.audio.seekable.end(0);
 
-      if (nextPlaying !== currentPlaying) {
-        nextPlaying ? this.play() : this.pause();
-      }
-
-      if (nextPosition > 0) {
-        const startRange = this.audio.seekable.start(0);
-        const endRange = this.audio.seekable.end(0);
-
-        if (nextPosition > startRange && nextPosition < endRange) {
-          this.audio.currentTime = nextPosition;
-          this.props.onSeekEnd();
-        }
+      if (nextPosition > startRange && nextPosition < endRange) {
+        this.audio.currentTime = nextPosition;
+        this.props.onSeekEnd();
       }
     }
   }
@@ -79,9 +80,7 @@ export default class Controls extends Component {
   }
 
   volume(value) {
-    if (value === 0) {
-      this.audio.muted = Boolean(value);
-    }
+    this.audio.volume = Number(value);
   }
 
   handlePauseClick() {
@@ -104,6 +103,10 @@ export default class Controls extends Component {
     this.props.onNext();
   }
 
+  handleVolumeChange(e, value) {
+    this.props.onVolume(value);
+  }
+
   static formatTime(value) {
     return moment.duration(value, 'seconds').format('mm:ss') || '';
   }
@@ -122,15 +125,9 @@ export default class Controls extends Component {
     }
 
     if (playing) {
-      playBtn = (
-        <i className="player__icon player__icon_name_pause fa fa-pause"
-           onClick={this.handlePlayClick.bind(this)}></i>
-      );
+      playBtn = (<IconButton onClick={this.handlePauseClick.bind(this)}><PauseIcon /></IconButton>);
     } else {
-      playBtn = (
-        <i className="player__icon player__icon_name_play fa fa-play"
-           onClick={this.handlePauseClick.bind(this)}></i>
-      )
+      playBtn = (<IconButton onClick={this.handlePlayClick.bind(this)}><PlayIcon /></IconButton>);
     }
 
     if (file && file.url) {
@@ -142,20 +139,19 @@ export default class Controls extends Component {
             {playBtn}
             <i className="player__icon player__icon_name_next fa fa-forward" onClick={this.handleNextClick.bind(this)}></i>
           </div>
-          <div className="player__volume-level"></div>
+          <div className="player__volume-level">
+            <Slider name="volume" onChange={this.handleVolumeChange.bind(this)} defaultValue={this.audio.volume} />
+          </div>
           <div className="player__btn player__btn_name_mute" onClick={this.handleMuteClick.bind(this)}>
             {mutedIcon}
           </div>
         </div>
       );
     } else {
-
       return (
         <div className="player__controls"></div>
       );
     }
-
-
   }
 
 }

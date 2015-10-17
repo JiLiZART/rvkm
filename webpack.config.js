@@ -40,7 +40,9 @@ module.exports = {
       'reducers': __dirname + '/src/reducers/',
       'actions': __dirname + '/src/actions/',
       'constants': __dirname + '/src/constants/',
-      'pages': __dirname + '/src/pages/'
+      'pages': __dirname + '/src/pages/',
+      "react": __dirname + '/node_modules/react',
+      "react/addons": __dirname + '/node_modules/react/addons'
     }
   },
   module: {
@@ -86,8 +88,8 @@ module.exports = {
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
       __DEVELOPMENT__: true,
-      __DEVTOOLS__: true  // <-------- DISABLE redux-devtools HERE
-    }),
+      __DEVTOOLS__: false  // <-------- DISABLE redux-devtools HERE
+    })
     //new BowerWebpackPlugin()
   ]
 

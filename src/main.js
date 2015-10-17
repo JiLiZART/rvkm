@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import { reduxReactRouter, ReduxRouter } from 'redux-router';
@@ -14,6 +15,9 @@ import createHistory from 'history/lib/createBrowserHistory';
 import * as reducers from './reducers';
 import * as actions from './actions';
 import { IndexPage, AlbumPage } from './pages';
+
+const ThemeManager = require('material-ui/lib/styles/theme-manager');
+const LightRawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme');
 
 let finalCreateStore;
 
@@ -38,26 +42,20 @@ const audioContext = new Audio();
 export default class Root extends Component {
 
   static appendScript() {
-    let el;
-    let transport;
+    const el = document.createElement('script');
+    const transport = document.getElementById('vk-api-transport');
 
-    transport = document.getElementById('vk-api-transport');
-    el = document.createElement('script');
     el.type = 'text/javascript';
     el.src = '//vk.com/js/api/openapi.js';
     el.async = true;
 
-    if (transport) {
-      transport.appendChild(el);
-    }
+    transport.appendChild(el);
   }
 
   componentDidMount() {
     const { appID } = this.props;
 
     Root.appendScript();
-
-    console.log('Root.componentDidMount', store);
 
     window.vkAsyncInit = function vkAsyncInit() {
       VK.init({apiId: appID});
@@ -66,7 +64,6 @@ export default class Root extends Component {
   }
 
   render() {
-    console.log('Root.render');
     let devtools = null;
 
     if (__DEVTOOLS__) {
@@ -86,7 +83,7 @@ export default class Root extends Component {
               <Route path="/" component={IndexPage} audioContext={audioContext}>
                 <Route path="album" component={AlbumPage}/>
                 <Route path="album/:album" component={AlbumPage}/>
-                <Route path="album/:album/:file" component={AlbumPage}/>
+                <Route path="album/:album/:audio" component={AlbumPage}/>
               </Route>
             </ReduxRouter>
 
