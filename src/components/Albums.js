@@ -1,12 +1,7 @@
 import React, { Component } from 'react';
-import { CircularProgress, SvgIcon, List, ListItem } from 'material-ui';
+import { CircularProgress, List, ListItem } from 'material-ui';
 
 export default class Albums extends Component {
-
-  handleItemClick(item) {
-    console.log('handleItemClick', item);
-    this.props.onItemClick(item);
-  }
 
   render() {
     const { albums, playlist } = this.props;
@@ -14,7 +9,7 @@ export default class Albums extends Component {
     let content;
 
     if (fetching) {
-       content = (<CircularProgress mode="indeterminate" size={1.5} />)
+      content = (<CircularProgress mode="indeterminate" size={1.5}/>);
     }
 
     if (error) {
@@ -32,7 +27,7 @@ export default class Albums extends Component {
             key={key}
             onClick={() => this.handleItemClick(item)}
             />
-        )
+        );
       });
     }
 
@@ -42,4 +37,9 @@ export default class Albums extends Component {
       </List>
     );
   }
+
+  handleItemClick(item) {
+    this.props.onItemClick(item);
+  }
+
 }

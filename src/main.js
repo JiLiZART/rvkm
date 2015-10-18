@@ -3,8 +3,6 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import { reduxReactRouter, ReduxRouter } from 'redux-router';
-
-import thunkMiddleware from './middlewares/thunkMiddleware.js';
 import promiseMiddleware from 'redux-promise';
 
 import { Provider } from 'react-redux';
@@ -12,12 +10,10 @@ import { Route } from 'react-router';
 import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
 import createHistory from 'history/lib/createBrowserHistory';
 
-import * as reducers from './reducers';
-import * as actions from './actions';
-import { IndexPage, AlbumPage } from './pages';
-
-const ThemeManager = require('material-ui/lib/styles/theme-manager');
-const LightRawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme');
+import { thunkMiddleware } from 'middlewares';
+import * as reducers from 'reducers';
+import * as actions from 'actions';
+import { IndexPage, AlbumPage } from 'pages';
 
 let finalCreateStore;
 
@@ -39,6 +35,11 @@ const reducer = combineReducers(reducers);
 const store = finalCreateStore(reducer);
 const audioContext = new Audio();
 
+const ThemeManager = require('material-ui/lib/styles/theme-manager');
+const LightRawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme');
+const Colors = require('material-ui/lib/styles/colors');
+const styles = require('styles/music.styl');
+
 export default class Root extends Component {
 
   static appendScript() {
@@ -52,8 +53,28 @@ export default class Root extends Component {
     transport.appendChild(el);
   }
 
+  constructor(props, context) {
+    super(props, context);
+
+    this.state = {
+      muiTheme: ThemeManager.getMuiTheme(LightRawTheme)
+    }
+  }
+
+  getChildContext() {
+    return {
+      muiTheme: this.state.muiTheme
+    };
+  }
+
   componentDidMount() {
     const { appID } = this.props;
+
+    const newMuiTheme = ThemeManager.modifyRawThemePalette(this.state.muiTheme, {
+      accent1Color: '#567ca4'
+    });
+
+    this.setState({muiTheme: newMuiTheme});
 
     Root.appendScript();
 
@@ -96,4 +117,8 @@ export default class Root extends Component {
   }
 }
 
-React.render(<Root appID='4966083'/>, document.getElementById('root'));
+Root.childContextTypes = {
+  muiTheme: React.PropTypes.object
+};
+
+React.render(<Root appID='4966083'/>, document.getElementById('content'));

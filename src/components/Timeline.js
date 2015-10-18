@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
-import moment from 'moment';
-import momentDuration from 'moment-duration-format';
+import { connect } from 'react-redux';
 
-export default class Timeline extends Component {
+import moment from 'moment';
+import 'moment-duration-format';
+
+@connect((state) => {
+  return {
+    player: state.player
+  };
+})
+class Timeline extends Component {
   constructor(props, context) {
     super(props, context);
 
@@ -12,7 +19,7 @@ export default class Timeline extends Component {
       progress: 0,
       time: '',
       trailWidth: 0
-    }
+    };
   }
 
   componentDidMount() {
@@ -40,6 +47,37 @@ export default class Timeline extends Component {
 
     delete this.trail;
     delete this.audio;
+  }
+
+  renderInfo() {
+    const { player } = this.props;
+    const { trailWidth, time } = this.state;
+    const { duration } = player.toJS();
+    const durationMinutes = Timeline.formatTime(duration);
+    const timeMinutes = Timeline.formatTime(time);
+
+    return (
+      <div className="timeline__info" style={{width: trailWidth + 'px'}}>
+        <div className="timeline__time">{timeMinutes}</div>
+        <div className="timeline__length">{durationMinutes}</div>
+      </div>
+    );
+  }
+
+  render() {
+    const { seek, buffer, progress } = this.state;
+    const info = this.renderInfo();
+
+    return (
+      <div className="timeline" ref="timeline">
+        <div className="timeline__trail" ref="trail">
+          <div className="timeline__buffer" style={{width: buffer + '%'}}></div>
+          <div className="timeline__seek" ref="seek" style={{width: seek + '%'}}></div>
+          {info}
+          <div className="timeline__progress" style={{width: progress + '%'}}>{info}</div>
+        </div>
+      </div>
+    );
   }
 
   unbindEvents() {
@@ -84,7 +122,7 @@ export default class Timeline extends Component {
     return this;
   }
 
-  handleProgress(e) {
+  handleProgress() {
     if (this.audio && this.audio.readyState === 4) {
       const startRange = this.audio.buffered.start(0);
       const endRange = this.audio.buffered.end(0);
@@ -94,8 +132,8 @@ export default class Timeline extends Component {
       const progress = time ? ((duration - time) / duration) * 100 : 0;
       const buffer = buffered / duration * 100;
 
-      this.props.onProgress({ time, progress, buffer });
-      this.setState({ time, progress, buffer });
+      //this.props.onProgress({time, progress, buffer});
+      this.setState({time, progress, buffer});
     }
   }
 
@@ -109,7 +147,7 @@ export default class Timeline extends Component {
     });
   }
 
-  handleTrailLeave(trailNode, e) {
+  handleTrailLeave() {
     this.setState({
       seek: 0
     });
@@ -133,35 +171,6 @@ export default class Timeline extends Component {
   static formatTime(value) {
     return moment.duration(value, 'seconds').format('mm:ss') || '';
   }
-
-  renderInfo() {
-    const { player } = this.props;
-    const { trailWidth, time } = this.state;
-    const { duration } = player.toJS();
-    const durationMinutes = Timeline.formatTime(duration);
-    const timeMinutes = Timeline.formatTime(time);
-
-    return (
-      <div className="timeline__info" style={{width: trailWidth + 'px'}}>
-        <div className="timeline__time">{timeMinutes}</div>
-        <div className="timeline__length">{durationMinutes}</div>
-      </div>
-    );
-  }
-
-  render() {
-    const { seek, buffer, progress } = this.state;
-    const info = this.renderInfo();
-
-    return (
-      <div className="timeline" ref="timeline">
-        <div className="timeline__trail" ref="trail">
-          <div className="timeline__buffer" style={{width: buffer + '%'}}></div>
-          <div className="timeline__seek" ref="seek" style={{width: seek + '%'}}></div>
-          {info}
-          <div className="timeline__progress" style={{width: progress + '%'}}>{info}</div>
-        </div>
-      </div>
-    );
-  }
 }
+
+export default Timeline;

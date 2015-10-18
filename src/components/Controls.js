@@ -1,23 +1,26 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import { Slider } from 'material-ui';
 import PlayIcon from 'material-ui/lib/svg-icons/av/play-arrow';
 import PauseIcon from 'material-ui/lib/svg-icons/av/pause';
 import VolumeMuteIcon from 'material-ui/lib/svg-icons/av/volume-mute';
 import VolumeOffIcon from 'material-ui/lib/svg-icons/av/volume-off';
+import ForwardIcon from 'material-ui/lib/svg-icons/av/fast-forward';
+import RewindIcon from 'material-ui/lib/svg-icons/av/fast-rewind';
 import IconButton from 'material-ui/lib/icon-button';
-import moment from 'moment';
-import momentDuration from 'moment-duration-format';
 
-export default class Controls extends Component {
+@connect((state) => {
+  return {
+    player: state.player
+  };
+})
+class Controls extends Component {
 
   componentDidMount() {
     const { audioContext } = this.props;
 
     this.setAudio(audioContext);
-  }
-
-  componentWillUnmount() {
-    delete this.audio;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -53,6 +56,54 @@ export default class Controls extends Component {
         this.props.onSeekEnd();
       }
     }
+  }
+
+  componentWillUnmount() {
+    delete this.audio;
+  }
+
+  render() {
+    const { player } = this.props;
+    const { playing, volume, file } = player.toJS();
+    const disableControls = !Boolean(file && file.url);
+    const defaultVolume = this.audio ? this.audio.volume : 1;
+
+    let mutedIcon;
+    let playBtn;
+
+    if (volume) {
+      mutedIcon = (<VolumeOffIcon />);
+    } else {
+      mutedIcon = (<VolumeMuteIcon />);
+    }
+
+    if (playing) {
+      playBtn = (
+        <IconButton disabled={disableControls} onClick={this.handlePauseClick.bind(this)}>
+          <PauseIcon style={{width: '40px', height: '40px'}}/>
+        </IconButton>
+      );
+    } else {
+      playBtn = (
+        <IconButton disabled={disableControls} onClick={this.handlePlayClick.bind(this)}>
+          <PlayIcon style={{width: '40px', height: '40px'}}/>
+        </IconButton>
+      );
+    }
+
+    return (
+      <div className="player__controls">
+        <div className="player__play-controls">
+          <IconButton disabled={disableControls} onClick={this.handlePrevClick.bind(this)}><RewindIcon /></IconButton>
+          {playBtn}
+          <IconButton disabled={disableControls} onClick={this.handleNextClick.bind(this)}><ForwardIcon /></IconButton>
+        </div>
+        <div className="player__volume-level">
+          <IconButton disabled={disableControls} onClick={this.handleMuteClick.bind(this)}>{mutedIcon}</IconButton>
+          <Slider name="volume" className="player__volume-slider" disabled={disableControls} onChange={this.handleVolumeChange.bind(this)} defaultValue={defaultVolume} step={0.01}/>
+        </div>
+      </div>
+    );
   }
 
   setSrc(url) {
@@ -104,54 +155,8 @@ export default class Controls extends Component {
   }
 
   handleVolumeChange(e, value) {
-    this.props.onVolume(value);
+    this.volume(value);
   }
-
-  static formatTime(value) {
-    return moment.duration(value, 'seconds').format('mm:ss') || '';
-  }
-
-  render() {
-    const { player } = this.props;
-    const { playing, volume, time, file } = player.toJS();
-
-    let mutedIcon;
-    let playBtn;
-
-    if (volume) {
-      mutedIcon = (<i className="player__icon glyphicon glyphicon-volume-off"></i>);
-    } else {
-      mutedIcon = (<i className="player__icon glyphicon glyphicon-volume-up"></i>);
-    }
-
-    if (playing) {
-      playBtn = (<IconButton onClick={this.handlePauseClick.bind(this)}><PauseIcon /></IconButton>);
-    } else {
-      playBtn = (<IconButton onClick={this.handlePlayClick.bind(this)}><PlayIcon /></IconButton>);
-    }
-
-    if (file && file.url) {
-      return (
-        <div className="player__controls">
-          <div className="player__current-time">{Controls.formatTime(time)}</div>
-          <div className="player__play-controls">
-            <i className="player__icon player__icon_name_prev fa fa-backward" onClick={this.handlePrevClick.bind(this)}></i>
-            {playBtn}
-            <i className="player__icon player__icon_name_next fa fa-forward" onClick={this.handleNextClick.bind(this)}></i>
-          </div>
-          <div className="player__volume-level">
-            <Slider name="volume" onChange={this.handleVolumeChange.bind(this)} defaultValue={this.audio.volume} />
-          </div>
-          <div className="player__btn player__btn_name_mute" onClick={this.handleMuteClick.bind(this)}>
-            {mutedIcon}
-          </div>
-        </div>
-      );
-    } else {
-      return (
-        <div className="player__controls"></div>
-      );
-    }
-  }
-
 }
+
+export default Controls;

@@ -1,6 +1,4 @@
-import React, { Component, PropTypes } from 'react';
-import GeminiScrollbar from 'react-gemini-scrollbar';
-import Immutable from 'immutable';
+import React, { Component } from 'react';
 
 export default class Scrollable extends Component {
   render() {

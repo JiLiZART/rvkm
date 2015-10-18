@@ -2,7 +2,11 @@ $ctx = music
 $headerHeight = 48px
 $sideWidth = 320px;
 
-@import 'blocks/**';
+html, body
+  margin 0
+  padding 0
+
+@require 'blocks/**';
 
 .{$ctx}
   font-family: 'Open Sans', sans-serif

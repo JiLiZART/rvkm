@@ -8,7 +8,6 @@ import Controls from './Controls.js';
 import Timeline from './Timeline.js';
 import Playlist from './Playlist.js';
 import Albums from './Albums.js';
-import Scrollable from './Scrollable.js';
 import Groups from './Groups.js';
 import Friends from './Friends.js';
 
@@ -24,7 +23,8 @@ import * as actions from '../actions';
     friends: state.friends,
     routerState: state.router
   };
-}) class App extends Component {
+})
+class App extends Component {
 
   render() {
     const {
@@ -41,6 +41,8 @@ import * as actions from '../actions';
       audioContext,
       } = this.props;
 
+    console.log('routerState', routerState);
+
     return (
       <section className="music">
         <div className="music__col">
@@ -54,7 +56,6 @@ import * as actions from '../actions';
               player={player}
               />
             <Timeline
-              player={player}
               audioContext={audioContext}
               onProgress={val => dispatch(actions.player.progress(val))}
               onSeek={pos => dispatch(actions.player.seek(pos))}
@@ -62,7 +63,6 @@ import * as actions from '../actions';
               onEnd={() => dispatch(actions.player.end())}
               />
             <Controls
-              player={player}
               audioContext={audioContext}
               onPlay={() => dispatch(actions.player.play())}
               onPause={() => dispatch(actions.player.pause())}

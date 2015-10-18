@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import File from './File';
 import Empty from './Empty';
 import Scrollable from './Scrollable';
+import { List } from 'material-ui';
 
 export default class Playlist extends Component {
   render() {
-    const { playlist, onFileClick } = this.props;
-    const { id, count, items, pending} = playlist.toJS();
+    const { playlist, player, onFileClick } = this.props;
+    const { items, pending} = playlist.toJS();
+    const { id } = player.toJS();
 
     let content = null;
 
@@ -16,7 +18,9 @@ export default class Playlist extends Component {
 
     if (items) {
       content = items.map((item, key) => {
-        return (<File key={key} file={item} currentID={id} onClick={onFileClick} />);
+        const current = item.id === id;
+
+        return (<File key={key} file={item} playing={current} onClick={onFileClick} />);
       });
     } else {
       content = (<Empty>Your list is empty</Empty>);
@@ -24,11 +28,7 @@ export default class Playlist extends Component {
 
     return (
       <Scrollable>
-        <div className="playlist">
-          <ul className="playlist__items list-group">
-            {content}
-          </ul>
-        </div>
+        <List className="playlist">{content}</List>
       </Scrollable>
     );
   }

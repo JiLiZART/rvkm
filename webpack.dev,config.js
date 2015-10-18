@@ -6,20 +6,24 @@
  */
 'use strict';
 var webpack = require('webpack');
-
+var BowerWebpackPlugin = require("bower-webpack-plugin");
 var assetPath = require('path').join(__dirname, 'dist');
-var exclusions = [/node_module/, 'server.js'];
 
 module.exports = {
 
   output: {
     path: assetPath,
     filename: 'main.js',
-    publicPath: '/'
+    publicPath: '/assets/'
   },
-  devtool: 'source-map',
-  progress: true,
+
+  cache: true,
+  debug: true,
+  devtool: 'sourcemap',
   entry: [
+    //'webpack-dev-server/client?http://localhost:9999',
+    //'webpack/hot/only-dev-server',
+    'webpack-hot-middleware/client',
     './src/main.js'
   ],
 
@@ -42,49 +46,51 @@ module.exports = {
     }
   },
   module: {
-    preLoaders: [{
-      test: /\.(js|jsx)$/,
-      exclude: exclusions,
-      loader: 'eslint'
-    }],
-    loaders: [{
-      test: /\.(js|jsx)$/,
-      exclude: exclusions,
-      loader: 'babel'
-    }, {
+    //preLoaders: [{
+    //  test: /\.(js|jsx)$/,
+    //  exclude: [/node_module/, 'server.js', 'mock/*'],
+    //  loader: 'eslint'
+    //}],
+    loaders: [
+    //{
+    //  test: /\.(js|jsx)$/,
+    //  exclude: /node_modules/,
+    //  loader: 'react-hot!babel'
+    //}
+    {
+      test: /\.js$/,
+      loaders: ['babel'],
+      include: __dirname + '/src'
+    },{
       test: /\.scss/,
-      exclude: exclusions,
       loader: 'style!css!autoprefixer!sass?outputStyle=expanded'
     }, {
+      test: /\.styl$/,
+      loader: "style!css!autoprefixer!stylus"
+    }, {
       test: /\.css$/,
-      exclude: [/\.raw\.css$/, /\.useable\.css$/, /node_modules/],
+      exclude: [/\.raw\.css$/, /\.useable\.css$/, /node_module/],
       loader: 'style!css!autoprefixer'
     }, {
       test: /\.useable\.css$/,
-      exclude: exclusions,
       loader: 'style/useable!raw!autoprefixer'
     }, {
       test: /\.raw\.css$/,
       loader: 'style!raw!autoprefixer'
     }, {
       test: /\.(png|jpg|woff|woff2)$/,
-      exclude: exclusions,
       loader: 'url?limit=8192'
     }]
   },
 
   plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
-      __DEVELOPMENT__: false,
+      __DEVELOPMENT__: true,
       __DEVTOOLS__: false  // <-------- DISABLE redux-devtools HERE
-    }),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
     })
+    //new BowerWebpackPlugin()
   ]
 
 };

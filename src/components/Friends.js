@@ -9,7 +9,7 @@ export default class Friends extends Component {
     let content;
 
     if (fetching) {
-       content = (<CircularProgress mode="indeterminate" size={1.5} />)
+      content = (<CircularProgress mode="indeterminate" size={1.5}/>);
     }
 
     if (error) {
@@ -20,7 +20,7 @@ export default class Friends extends Component {
       content = Object.keys(items).map((key) => {
         const item = items[key];
 
-        return (<ListItem leftAvatar={<Avatar src={item.avatar} />} primaryText={item.title} />)
+        return (<ListItem key={key} leftAvatar={<Avatar src={item.avatar} />} primaryText={item.title} />);
       });
     }
 

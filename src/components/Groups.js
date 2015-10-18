@@ -9,7 +9,7 @@ export default class Groups extends Component {
     let content;
 
     if (fetching) {
-       content = (<CircularProgress mode="indeterminate" size={1.5} />)
+      content = (<CircularProgress mode="indeterminate" size={1.5}/>);
     }
 
     if (error) {
@@ -21,14 +21,12 @@ export default class Groups extends Component {
         const item = items[key];
         const avatar = (<Avatar src={item.avatar} />);
 
-        return (<ListItem leftAvatar={avatar} primaryText={item.title} />)
+        return (<ListItem key={key} leftAvatar={avatar} primaryText={item.title} />);
       });
     }
 
     return (
-      <List className="groups" subheader="Groups">
-        {content}
-      </List>
+      <List className="groups" subheader="Groups">{content}</List>
     );
   }
 }
