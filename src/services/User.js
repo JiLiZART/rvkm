@@ -34,11 +34,11 @@ export const ALBUM = {
 
 export default class User {
   static login() {
-    return Api.login(VK.access.AUDIO)
+    return Api.login(VK.access.AUDIO);
   }
 
   static logout() {
-    return Api.logout()
+    return Api.logout();
   }
 
   static status() {
@@ -58,7 +58,7 @@ export default class User {
               items: [],
               count: 0,
               avatar: item.photo_50
-            }
+            };
           });
 
           fulfill(friends);
@@ -80,7 +80,7 @@ export default class User {
               items: [],
               count: 0,
               avatar: item.photo_50
-            }
+            };
           });
 
           fulfill(groups);
@@ -107,26 +107,26 @@ export default class User {
                 count: files.length
               };
 
-              albumsResponse.items.forEach((item, idx) => {
-                let albumFiles = albumsFiles.filter((audio) => audio.album_id === item.id);
+              albumsResponse.items.forEach(item => {
+                const albumFiles = albumsFiles.filter(audio => audio.album_id === item.id);
 
                 albums[item.id] = {
                   id: item.id,
                   title: item.title,
                   items: albumFiles,
                   count: albumFiles.length
-                }
+                };
               });
 
               fulfill(albums);
             } else reject();
           }, reject);
         } else reject();
-      }, reject)
+      }, reject);
     });
   }
 
   static getPlaylist(userID) {
-    return Api.call('audio.get', {owner_id: userID})
+    return Api.call('audio.get', {owner_id: userID});
   }
 }

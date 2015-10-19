@@ -10,7 +10,7 @@ const playlistState = fromJS({
 });
 
 export default handleActions({
-  PLAYLIST_START: (state, action) => {
+  PLAYLIST_START: (state) => {
     return state.merge({
       pending: true
     });

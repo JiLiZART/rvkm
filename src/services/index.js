@@ -1,7 +1,5 @@
 import Api from './Api.js';
 import User from './User.js';
+import AudioContext from './AudioContext.js';
 
-export default {
-  Api,
-  User
-}
+export { Api, User, AudioContext };

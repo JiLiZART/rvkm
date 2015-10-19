@@ -1,5 +1,5 @@
 import { createAction } from 'redux-actions';
-import Service from '../services';
+import { User } from 'services';
 
 const albums = require('./albums');
 const groups = require('./groups');
@@ -10,12 +10,12 @@ export const start = createAction('SESSION_START', session => session);
 
 export function status() {
   return (dispatch) => {
-    Service.User.status().then((session) => {
-        dispatch(start(session));
-        dispatch(albums.fetch(session.mid));
-        dispatch(groups.fetch(session.mid));
-        dispatch(friends.fetch(session.mid));
-    }, console.error.bind(console))
+    User.status().then((session) => {
+      dispatch(start(session));
+      dispatch(albums.fetch(session.mid));
+      dispatch(groups.fetch(session.mid));
+      dispatch(friends.fetch(session.mid));
+    }, console.error.bind(console));
   };
 }
 
@@ -26,7 +26,7 @@ export function login() {
   return (dispatch) => {
     dispatch(loginStart());
 
-    Service.User.login().then((session) => {
+    User.login().then((session) => {
       dispatch(loginSuccess());
       dispatch(start(session));
       dispatch(albums.fetch(session.mid));
@@ -43,7 +43,7 @@ export function logout() {
   return (dispatch) => {
     dispatch(logoutStart());
 
-    Service.User.logout().then(() => {
+    User.logout().then(() => {
       dispatch(logoutSuccess());
     }, console.error.bind(console));
   };

@@ -1,5 +1,4 @@
 import { createAction } from 'redux-actions';
-import Service from '../services';
 
 const session = require('./session');
 

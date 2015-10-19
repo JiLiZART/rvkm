@@ -1,5 +1,3 @@
-import { createAction } from 'redux-actions';
-
 const actions = {
   session: require('./session'),
   player: require('./player'),

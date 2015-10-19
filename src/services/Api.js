@@ -45,7 +45,7 @@ export default class Api {
         v: API_VERSION
       }, params, queryTry), (r) => {
         if (r.error) {
-          reject(r.error)
+          reject(r.error);
         }
 
         if (r.response) {

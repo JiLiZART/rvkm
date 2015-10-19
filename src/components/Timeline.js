@@ -4,12 +4,14 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import 'moment-duration-format';
 
+import styles from 'styles/blocks/timeline.styl';
+
 @connect((state) => {
   return {
     player: state.player
   };
-})
-class Timeline extends Component {
+}) class Timeline extends Component {
+
   constructor(props, context) {
     super(props, context);
 
@@ -24,11 +26,11 @@ class Timeline extends Component {
 
   componentDidMount() {
     const { audioContext } = this.props;
-    const trail = React.findDOMNode(this.refs.trail);
     const timeline = React.findDOMNode(this.refs.timeline);
+
     const updateTrail = () => {
       this.setState({
-        trailWidth: timeline.clientWidth
+        width: timeline.clientWidth
       });
     };
 
@@ -37,7 +39,6 @@ class Timeline extends Component {
     window.addEventListener('resize', updateTrail);
 
     this
-      .setTrail(trail)
       .setAudio(audioContext)
       .bindEvents();
   }
@@ -45,94 +46,93 @@ class Timeline extends Component {
   componentWillUnmount() {
     this.unbindEvents();
 
-    delete this.trail;
-    delete this.audio;
+    delete this.audioContext;
   }
 
   renderInfo() {
     const { player } = this.props;
-    const { trailWidth, time } = this.state;
+    const { width, time } = this.state;
     const { duration } = player.toJS();
     const durationMinutes = Timeline.formatTime(duration);
     const timeMinutes = Timeline.formatTime(time);
 
     return (
-      <div className="timeline__info" style={{width: trailWidth + 'px'}}>
-        <div className="timeline__time">{timeMinutes}</div>
-        <div className="timeline__length">{durationMinutes}</div>
+      <div className={styles.timeline__info} style={{width: width + 'px'}}>
+        <div className={styles.timeline__time}>{timeMinutes}</div>
+        <div className={styles.timeline__length}>{durationMinutes}</div>
       </div>
     );
   }
 
   render() {
     const { seek, buffer, progress } = this.state;
+    const { player } = this.props;
+    const { file } = player.toJS();
+    const haveFile = Boolean(file && file.url);
     const info = this.renderInfo();
+    const inSeek = Boolean(seek) ? styles.timeline_seek : '';
+
+    if (haveFile) {
+      return (
+        <div className={styles.timeline + ' ' + inSeek} ref="timeline"
+             onMouseMove={this.handleTrailMove.bind(this)}
+             onMouseLeave={this.handleTrailLeave.bind(this)}
+             onClick={this.handleTrailClick.bind(this)}
+          >
+          <div className={styles.timeline__trail} ref="trail">
+            <div className={styles.timeline__buffer} style={{width: buffer + '%'}}></div>
+            <div className={styles.timeline__seek} ref="seek" style={{width: seek + '%'}}></div>
+            {info}
+            <div className={styles.timeline__progress} style={{width: progress + '%'}}>{info}</div>
+          </div>
+        </div>
+      );
+    }
 
     return (
-      <div className="timeline" ref="timeline">
-        <div className="timeline__trail" ref="trail">
-          <div className="timeline__buffer" style={{width: buffer + '%'}}></div>
-          <div className="timeline__seek" ref="seek" style={{width: seek + '%'}}></div>
-          {info}
-          <div className="timeline__progress" style={{width: progress + '%'}}>{info}</div>
-        </div>
-      </div>
+      <div className={styles.timeline} ref="timeline"></div>
     );
   }
 
   unbindEvents() {
-    const audio = this.audio;
-    const trail = this.trail;
+    const audio = this.audioContext;
 
-    audio.removeEventListener('progress', this.handleProgress.bind(this));
-    audio.removeEventListener('timeupdate', this.handleProgress.bind(this));
-    audio.removeEventListener('ended', this.handleFileEnd.bind(this));
-
-    trail.removeEventListener('mousemove', this.handleTrailMove.bind(this, trail));
-    trail.removeEventListener('mouseleave', this.handleTrailLeave.bind(this, trail));
-    trail.removeEventListener('click', this.handleTrailClick.bind(this, trail));
+    audio
+      .off('progress', this.handleProgress.bind(this))
+      .off('timeupdate', this.handleProgress.bind(this))
+      .off('ended', this.handleFileEnd.bind(this));
 
     return this;
   }
 
   bindEvents() {
-    const audio = this.audio;
-    const trail = this.trail;
+    const audio = this.audioContext;
 
-    audio.addEventListener('progress', this.handleProgress.bind(this));
-    audio.addEventListener('timeupdate', this.handleProgress.bind(this));
-    audio.addEventListener('ended', this.handleFileEnd.bind(this));
-
-    trail.addEventListener('mousemove', this.handleTrailMove.bind(this, trail));
-    trail.addEventListener('mouseleave', this.handleTrailLeave.bind(this, trail));
-    trail.addEventListener('click', this.handleTrailClick.bind(this, trail));
-
-    return this;
-  }
-
-  setTrail(trail) {
-    this.trail = trail;
+    audio
+      .on('progress', this.handleProgress.bind(this))
+      .on('timeupdate', this.handleProgress.bind(this))
+      .on('ended', this.handleFileEnd.bind(this));
 
     return this;
   }
 
   setAudio(audio) {
-    this.audio = audio;
+    this.audioContext = audio;
 
     return this;
   }
 
   handleProgress() {
-    if (this.audio && this.audio.readyState === 4) {
-      const startRange = this.audio.buffered.start(0);
-      const endRange = this.audio.buffered.end(0);
+    if (this.audioContext && this.audioContext.getState() === 4) {
       const duration = this.props.player.get('duration');
+      const startRange = this.audioContext.getBuffered().start(0);
+      const endRange = this.audioContext.getBuffered().end(0);
       const buffered = endRange - startRange;
-      const time = duration - Math.round(this.audio.currentTime);
+      const time = duration - Math.round(this.audioContext.getCurrentTime());
       const progress = time ? ((duration - time) / duration) * 100 : 0;
       const buffer = buffered / duration * 100;
 
-      //this.props.onProgress({time, progress, buffer});
+      // this.props.onProgress({time, progress, buffer});
       this.setState({time, progress, buffer});
     }
   }
@@ -141,9 +141,9 @@ class Timeline extends Component {
     this.props.onEnd();
   }
 
-  handleTrailMove(trailNode, e) {
+  handleTrailMove(e) {
     this.setState({
-      seek: Timeline.calculateSeek(trailNode, e) * 100
+      seek: Timeline.calculateSeek(e, this.state.width) * 100
     });
   }
 
@@ -153,19 +153,16 @@ class Timeline extends Component {
     });
   }
 
-  handleTrailClick(trailNode, e) {
+  handleTrailClick(e) {
     const duration = this.props.player.get('duration');
-    const currentPercent = Timeline.calculateSeek(trailNode, e);
+    const currentPercent = Timeline.calculateSeek(e, this.state.width);
     const currentDuration = duration * currentPercent;
 
     this.props.onSeek(currentDuration);
   }
 
-  static calculateSeek(trailNode, e) {
-    const fullTrailWidth = trailNode.offsetLeft + trailNode.offsetWidth;
-    const currentOffset = e.offsetX;
-
-    return currentOffset / fullTrailWidth;
+  static calculateSeek(e, width) {
+    return e.clientX / width;
   }
 
   static formatTime(value) {

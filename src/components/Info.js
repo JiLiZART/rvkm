@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import styles from 'styles/blocks/info.styl';
+
 export default class Info extends Component {
 
   render() {
@@ -8,18 +10,18 @@ export default class Info extends Component {
     const title = player.getIn(['file', 'title'], '');
 
     return (
-      <div className="player__info">
-        <div className="player__left">
+      <div className={styles.info}>
+        <div className={styles.info__left}>
           <i className="fa fa-random"></i>
           <i className="fa fa-heart"></i>
         </div>
-        <div className="player__center">
-          <div className="player__current">
-            <span className="player__title">{title}</span>
-            <span className="player__artist">{artist}</span>
+        <div className={styles.info__center}>
+          <div className={styles.info__current}>
+            <span className={styles.info__title}>{title}</span>
+            <span className={styles.info__artist}>{artist}</span>
           </div>
         </div>
-        <div className="player__right">
+        <div className={styles.info__right}>
           <i className="fa fa-repeat"></i>
           <i className="fa fa-share"></i>
         </div>

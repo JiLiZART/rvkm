@@ -13,6 +13,7 @@ const resolve = {
       'components': __dirname + '/src/components/',
       'reducers': __dirname + '/src/reducers/',
       'actions': __dirname + '/src/actions/',
+      'services': __dirname + '/src/services',
       'middlewares': __dirname + '/src/middlewares/',
       'pages': __dirname + '/src/pages/',
       'react': __dirname + '/node_modules/react',

@@ -14,6 +14,7 @@ import { thunkMiddleware } from 'middlewares';
 import * as reducers from 'reducers';
 import * as actions from 'actions';
 import { IndexPage, AlbumPage } from 'pages';
+import { AudioContext } from 'services';
 
 let finalCreateStore;
 
@@ -33,32 +34,25 @@ if (__DEVTOOLS__) {
 
 const reducer = combineReducers(reducers);
 const store = finalCreateStore(reducer);
-const audioContext = new Audio();
+const audioContext = AudioContext.create();
+
+injectTapEventPlugin();
 
 const ThemeManager = require('material-ui/lib/styles/theme-manager');
 const LightRawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme');
-const Colors = require('material-ui/lib/styles/colors');
-const styles = require('styles/music.styl');
 
 export default class Root extends Component {
-
-  static appendScript() {
-    const el = document.createElement('script');
-    const transport = document.getElementById('vk-api-transport');
-
-    el.type = 'text/javascript';
-    el.src = '//vk.com/js/api/openapi.js';
-    el.async = true;
-
-    transport.appendChild(el);
-  }
 
   constructor(props, context) {
     super(props, context);
 
+    const muiTheme = ThemeManager.getMuiTheme(LightRawTheme);
+
     this.state = {
-      muiTheme: ThemeManager.getMuiTheme(LightRawTheme)
-    }
+      muiTheme: ThemeManager.modifyRawThemePalette(muiTheme, {
+        accent1Color: '#567ca4'
+      })
+    };
   }
 
   getChildContext() {
@@ -69,12 +63,6 @@ export default class Root extends Component {
 
   componentDidMount() {
     const { appID } = this.props;
-
-    const newMuiTheme = ThemeManager.modifyRawThemePalette(this.state.muiTheme, {
-      accent1Color: '#567ca4'
-    });
-
-    this.setState({muiTheme: newMuiTheme});
 
     Root.appendScript();
 
@@ -115,10 +103,21 @@ export default class Root extends Component {
       </div>
     );
   }
+
+  static appendScript() {
+    const el = document.createElement('script');
+    const transport = document.getElementById('vk-api-transport');
+
+    el.type = 'text/javascript';
+    el.src = '//vk.com/js/api/openapi.js';
+    el.async = true;
+
+    transport.appendChild(el);
+  }
 }
 
 Root.childContextTypes = {
   muiTheme: React.PropTypes.object
 };
 
-React.render(<Root appID='4966083'/>, document.getElementById('content'));
+React.render(<Root appID="4966083"/>, document.getElementById('content'));

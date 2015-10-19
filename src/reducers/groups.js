@@ -24,7 +24,7 @@ export default handleActions({
       count: payload.length
     });
   },
-  GROUPS_ERROR: (state , action) => {
+  GROUPS_ERROR: (state, action) => {
     const { payload } = action;
 
     return state.merge({

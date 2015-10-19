@@ -9,7 +9,7 @@ const defaultState = fromJS({
 });
 
 export default handleActions({
-  FRIENDS_START: (state, action) => {
+  FRIENDS_START: (state) => {
     return state.merge({
       fetching: true
     });
@@ -24,7 +24,7 @@ export default handleActions({
       count: payload.length
     });
   },
-  FRIENDS_ERROR: (state , action) => {
+  FRIENDS_ERROR: (state, action) => {
     const { payload } = action;
 
     return state.merge({

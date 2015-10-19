@@ -10,6 +10,8 @@ import ForwardIcon from 'material-ui/lib/svg-icons/av/fast-forward';
 import RewindIcon from 'material-ui/lib/svg-icons/av/fast-rewind';
 import IconButton from 'material-ui/lib/icon-button';
 
+import styles from 'styles/blocks/controls.styl';
+
 @connect((state) => {
   return {
     player: state.player
@@ -20,7 +22,7 @@ class Controls extends Component {
   componentDidMount() {
     const { audioContext } = this.props;
 
-    this.setAudio(audioContext);
+    this.setAudioContext(audioContext);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -36,23 +38,23 @@ class Controls extends Component {
     const currentPlaying = currentPlayer.get('playing');
 
     if (nextFileUrl !== currentFileUrl) {
-      this.setSrcAndPlay(nextFileUrl);
+      this.audioContext.setSrcAndPlay(nextFileUrl);
     }
 
     if (nextVolume !== currentVolume) {
-      this.volume(nextVolume);
+      this.audioContext.setVolume(nextVolume);
     }
 
     if (nextPlaying !== currentPlaying) {
-      nextPlaying ? this.play() : this.pause();
+      nextPlaying ? this.audioContext.play() : this.audioContext.pause();
     }
 
     if (nextPosition > 0) {
-      const startRange = this.audio.seekable.start(0);
-      const endRange = this.audio.seekable.end(0);
+      const startRange = this.audioContext.getSeekable().start(0);
+      const endRange = this.audioContext.getSeekable().end(0);
 
       if (nextPosition > startRange && nextPosition < endRange) {
-        this.audio.currentTime = nextPosition;
+        this.audioContext.setCurrentTime(nextPosition);
         this.props.onSeekEnd();
       }
     }
@@ -66,7 +68,7 @@ class Controls extends Component {
     const { player } = this.props;
     const { playing, volume, file } = player.toJS();
     const disableControls = !Boolean(file && file.url);
-    const defaultVolume = this.audio ? this.audio.volume : 1;
+    const defaultVolume = this.audioContext ? this.audioContext.getVolume() : 1;
 
     let mutedIcon;
     let playBtn;
@@ -92,46 +94,24 @@ class Controls extends Component {
     }
 
     return (
-      <div className="player__controls">
-        <div className="player__play-controls">
+      <div className={styles.controls}>
+        <div className={styles.controls__buttons}>
           <IconButton disabled={disableControls} onClick={this.handlePrevClick.bind(this)}><RewindIcon /></IconButton>
           {playBtn}
           <IconButton disabled={disableControls} onClick={this.handleNextClick.bind(this)}><ForwardIcon /></IconButton>
         </div>
-        <div className="player__volume-level">
-          <IconButton disabled={disableControls} onClick={this.handleMuteClick.bind(this)}>{mutedIcon}</IconButton>
-          <Slider name="volume" className="player__volume-slider" disabled={disableControls} onChange={this.handleVolumeChange.bind(this)} defaultValue={defaultVolume} step={0.01}/>
+        <div className={styles.controls__volume}>
+          <IconButton controls={disableControls} onClick={this.handleMuteClick.bind(this)}>{mutedIcon}</IconButton>
+          <Slider name="volume" className={styles.controls__slider} disabled={disableControls} onChange={this.handleVolumeChange.bind(this)} defaultValue={defaultVolume} step={0.01}/>
         </div>
       </div>
     );
   }
 
-  setSrc(url) {
-    this.audio.src = url;
-  }
-
-  setAudio(audio) {
-    this.audio = audio;
+  setAudioContext(audio) {
+    this.audioContext = audio;
 
     return this;
-  }
-
-  setSrcAndPlay(url) {
-    this.pause();
-    this.setSrc(url);
-    this.play();
-  }
-
-  play() {
-    this.audio.play();
-  }
-
-  pause() {
-    this.audio.pause();
-  }
-
-  volume(value) {
-    this.audio.volume = Number(value);
   }
 
   handlePauseClick() {
@@ -155,7 +135,7 @@ class Controls extends Component {
   }
 
   handleVolumeChange(e, value) {
-    this.volume(value);
+    this.audioContext.setVolume(value);
   }
 }
 

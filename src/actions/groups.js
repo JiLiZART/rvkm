@@ -1,7 +1,5 @@
 import { createAction } from 'redux-actions';
-import Service from '../services';
-
-const playlist = require('./playlist');
+import { User } from 'services';
 
 export const start = createAction('GROUPS_START');
 export const error = createAction('GROUPS_ERROR');
@@ -11,6 +9,6 @@ export function fetch(userID) {
   return (dispatch) => {
     dispatch(start());
 
-    Service.User.getGroups(userID).then((items) => dispatch(success(items)), () => dispatch(error()));
+    User.getGroups(userID).then((items) => dispatch(success(items)), () => dispatch(error()));
   };
 }

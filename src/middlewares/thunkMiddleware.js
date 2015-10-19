@@ -7,9 +7,9 @@ export default function thunkMiddleware({ dispatch, getState }) {
     return (action) => {
       if (isFSA(action)) {
         return isFunction(action.payload) ? action.payload(dispatch, getState) : next(action);
-      } else {
-        return isFunction(action) ? action(dispatch, getState) : next(action);
       }
-    }
-  }
+
+      return isFunction(action) ? action(dispatch, getState) : next(action);
+    };
+  };
 }

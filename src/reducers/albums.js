@@ -9,7 +9,7 @@ const defaultState = fromJS({
 });
 
 export default handleActions({
-  ALBUMS_START: (state, action) => {
+  ALBUMS_START: (state) => {
     return state.merge({
       fetching: true
     });
@@ -24,7 +24,7 @@ export default handleActions({
       count: payload.length
     });
   },
-  ALBUMS_ERROR: (state , action) => {
+  ALBUMS_ERROR: (state, action) => {
     const { payload } = action;
 
     return state.merge({

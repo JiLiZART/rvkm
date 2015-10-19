@@ -29,22 +29,22 @@ export default handleActions({
       position: action.payload
     });
   },
-  PLAYER_SEEK_END: (state, action) => {
+  PLAYER_SEEK_END: (state) => {
     return state.merge({
       position: null
     });
   },
-  PLAYER_PLAY: (state, action) => {
+  PLAYER_PLAY: (state) => {
     return state.merge({
       playing: true
     });
   },
-  PLAYER_PAUSE: (state, action) => {
+  PLAYER_PAUSE: (state) => {
     return state.merge({
       playing: false
     });
   },
-  PLAYER_END: (state, action) => {
+  PLAYER_END: (state) => {
     return state.merge({
       playing: false,
       time: 0,

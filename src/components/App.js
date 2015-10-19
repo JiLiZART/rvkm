@@ -13,6 +13,8 @@ import Friends from './Friends.js';
 
 import * as actions from '../actions';
 
+import styles from 'styles/blocks/music.styl';
+
 @connect((state) => {
   return {
     session: state.session,
@@ -23,8 +25,7 @@ import * as actions from '../actions';
     friends: state.friends,
     routerState: state.router
   };
-})
-class App extends Component {
+}) class App extends Component {
 
   render() {
     const {
@@ -38,14 +39,15 @@ class App extends Component {
 
       dispatch,
 
-      audioContext,
+      audioContext
+
       } = this.props;
 
     console.log('routerState', routerState);
 
     return (
-      <section className="music">
-        <div className="music__col">
+      <section className={styles.music}>
+        <div className={styles.music__col}>
           <User
             session={session}
             onLogout={() => dispatch(actions.session.logout())}
@@ -59,7 +61,6 @@ class App extends Component {
               audioContext={audioContext}
               onProgress={val => dispatch(actions.player.progress(val))}
               onSeek={pos => dispatch(actions.player.seek(pos))}
-              onSeekEnd={() => dispatch(actions.player.seekEnd())}
               onEnd={() => dispatch(actions.player.end())}
               />
             <Controls
@@ -69,6 +70,7 @@ class App extends Component {
               onPrev={() => dispatch(actions.player.prev())}
               onNext={() => dispatch(actions.player.next())}
               onVolume={(value) => dispatch(actions.player.volume(value))}
+              onSeekEnd={() => dispatch(actions.player.seekEnd())}
               />
           </Player>
           <Playlist
@@ -78,28 +80,28 @@ class App extends Component {
             />
         </div>
 
-        <div className="music__col">
+        <div className={styles.music__col}>
           <Albums
             albums={albums}
             playlist={playlist}
             onItemClick={(item) => dispatch(actions.playlist.load(item))}
-          />
+            />
         </div>
 
-        <div className="music__col">
+        <div className={styles.music__col}>
           <Groups
             groups={groups}
             playlist={playlist}
             onItemClick={(item) => dispatch(actions.playlist.load(item))}
-           />
+            />
         </div>
 
-        <div className="music__col">
+        <div className={styles.music__col}>
           <Friends
             friends={friends}
             playlist={playlist}
             onItemClick={(item) => dispatch(actions.playlist.load(item))}
-           />
+            />
         </div>
       </section>
     );
