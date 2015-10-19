@@ -25,16 +25,18 @@ class AudioContext {
     return this;
   }
 
-  setSrc(url) {
+  src(url) {
     this.audio.src = url;
 
     return this;
   }
 
-  setSrcAndPlay(url) {
-    this.pause();
-    this.setSrc(url);
-    this.play();
+  srcAndPlay(url) {
+    if (this.audio.src !== url) {
+      this.pause();
+      this.src(url);
+      this.play();
+    }
 
     return this;
   }
@@ -47,7 +49,21 @@ class AudioContext {
     this.audio.pause();
   }
 
-  setVolume(value) {
+  position(value) {
+    if (value > 0) {
+      const startRange = this.getSeekable().start(0);
+      const endRange = this.getSeekable().end(0);
+
+      if (value > startRange && value < endRange) {
+        this.setCurrentTime(nextPosition);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  volume(value) {
     this.audio.volume = Number(value);
 
     return this;

@@ -17,21 +17,16 @@ export default handleActions({
   ALBUMS_SUCCESS: (state, action) => {
     const { payload } = action;
 
-    return state.merge({
+    return state.mergeDeep({
       fetching: false,
       error: false,
-      items: payload,
-      count: payload.length
+      items: payload
     });
   },
-  ALBUMS_ERROR: (state, action) => {
-    const { payload } = action;
-
+  ALBUMS_ERROR: (state) => {
     return state.merge({
       fetching: false,
-      error: true,
-      items: payload,
-      count: payload.length
+      error: true
     });
   }
 }, defaultState);

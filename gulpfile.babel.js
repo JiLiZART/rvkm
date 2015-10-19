@@ -1,6 +1,7 @@
 /* global console */
 
 import gulp from 'gulp';
+import ghPages from 'gulp-gh-pages';
 import gulpLoadPlugins from 'gulp-load-plugins';
 import webpack from 'webpack';
 
@@ -10,11 +11,7 @@ const $ = gulpLoadPlugins();
 const config = require('./webpack.config.js');
 const options = {};
 
-gulp.task('assets', (cb) => {
-  return gulp.src('src/public/**')
-    .pipe(gulp.dest('dist/'))
-    .pipe($.size({title: 'assets'}));
-});
+gulp.task('assets', (cb) => gulp.src('src/public/**').pipe(gulp.dest('dist/')).pipe($.size({title: 'assets'})));
 
 gulp.task('clean', (cb) => del(['dist/'], cb));
 
@@ -29,3 +26,5 @@ gulp.task('build', ['clean'], (cb) => {
     cb();
   });
 });
+
+gulp.task('ghpages', ['build'], () => gulp.src('dist/**/*').pipe(ghPages()));

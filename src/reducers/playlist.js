@@ -2,7 +2,8 @@ import { fromJS } from 'immutable';
 import { handleActions } from 'redux-actions';
 
 const playlistState = fromJS({
-  pending: false,
+  fetching: false,
+  error: false,
   items: [],
   count: 0,
   id: 0,
@@ -12,14 +13,28 @@ const playlistState = fromJS({
 export default handleActions({
   PLAYLIST_START: (state) => {
     return state.merge({
-      pending: true
+      fetching: true,
+      error: false
     });
   },
-  PLAYLIST_LOAD: (state, action) => {
+
+  PLAYLIST_ERROR: (state, action) => {
     const { payload } = action;
 
-    return state.merge({
-      pending: false,
+    return state.mergeDeep({
+      fetching: false,
+      error: true,
+      items: payload,
+      count: payload.length
+    });
+  },
+
+  PLAYLIST_SUCCESS: (state, action) => {
+    const { payload } = action;
+
+    return state.mergeDeep({
+      fetching: false,
+      error: false,
       items: payload.items,
       count: payload.count,
       id: payload.id,

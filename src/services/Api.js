@@ -34,6 +34,8 @@ export default class Api {
       VK.Auth.logout((r) => {
         if (r.error) {
           reject(r.error);
+        } else {
+          fulfill();
         }
       });
     });

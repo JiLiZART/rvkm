@@ -16,8 +16,7 @@ import styles from 'styles/blocks/controls.styl';
   return {
     player: state.player
   };
-})
-class Controls extends Component {
+}) class Controls extends Component {
 
   componentDidMount() {
     const { audioContext } = this.props;
@@ -28,35 +27,12 @@ class Controls extends Component {
   componentWillReceiveProps(nextProps) {
     const nextPlayer = nextProps.player;
     const nextFileUrl = nextPlayer.getIn(['file', 'url'], '');
-    const nextVolume = nextPlayer.get('volume');
-    const nextPlaying = nextPlayer.get('playing');
     const nextPosition = nextPlayer.get('position', 0);
 
-    const currentPlayer = this.props.player;
-    const currentFileUrl = currentPlayer.getIn(['file', 'url'], '');
-    const currentVolume = currentPlayer.get('volume');
-    const currentPlaying = currentPlayer.get('playing');
+    this.audioContext.srcAndPlay(nextFileUrl);
 
-    if (nextFileUrl !== currentFileUrl) {
-      this.audioContext.setSrcAndPlay(nextFileUrl);
-    }
-
-    if (nextVolume !== currentVolume) {
-      this.audioContext.setVolume(nextVolume);
-    }
-
-    if (nextPlaying !== currentPlaying) {
-      nextPlaying ? this.audioContext.play() : this.audioContext.pause();
-    }
-
-    if (nextPosition > 0) {
-      const startRange = this.audioContext.getSeekable().start(0);
-      const endRange = this.audioContext.getSeekable().end(0);
-
-      if (nextPosition > startRange && nextPosition < endRange) {
-        this.audioContext.setCurrentTime(nextPosition);
-        this.props.onSeekEnd();
-      }
+    if (this.audioContext.position(nextPosition)) {
+      this.props.onSeekEnd();
     }
   }
 
@@ -115,27 +91,51 @@ class Controls extends Component {
   }
 
   handlePauseClick() {
+    this.audioContext.pause();
     this.props.onPause();
   }
 
   handlePlayClick() {
+    this.audioContext.play();
     this.props.onPlay();
   }
 
   handleMuteClick() {
-    this.props.onVolume(0);
+    this.audioContext.volume(0);
   }
 
   handlePrevClick() {
-    this.props.onPrev();
+    const { player, playlist } = this.props;
+    const { items } = playlist.toJS();
+
+    items.forEach((item, idx) => {
+      if (player.get('id') === item.id) {
+        const nextIdx = idx - 1;
+
+        if (items[nextIdx]) {
+          this.props.onLoad(items[nextIdx]);
+        }
+      }
+    });
   }
 
   handleNextClick() {
-    this.props.onNext();
+    const { player, playlist } = this.props;
+    const { items } = playlist.toJS();
+
+    items.forEach((item, idx) => {
+      if (player.get('id') === item.id) {
+        const nextIdx = idx + 1;
+
+        if (items[nextIdx]) {
+          this.props.onLoad(items[nextIdx]);
+        }
+      }
+    });
   }
 
   handleVolumeChange(e, value) {
-    this.audioContext.setVolume(value);
+    this.audioContext.volume(value);
   }
 }
 

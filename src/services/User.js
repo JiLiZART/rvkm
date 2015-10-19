@@ -32,9 +32,15 @@ export const ALBUM = {
   POPULAR: 3
 };
 
+export const ACCESS = {
+  GROUPS: 262144,
+  AUDIO: 8,
+  FRIENDS: 2
+};
+
 export default class User {
   static login() {
-    return Api.login(VK.access.AUDIO);
+    return Api.login(ACCESS.AUDIO + ACCESS.GROUPS + ACCESS.FRIENDS);
   }
 
   static logout() {
@@ -67,6 +73,24 @@ export default class User {
     });
   }
 
+  static getFriendAudio(userID) {
+    return new Promise((fulfill, reject) => {
+      Api.call('audio.get', {owner_id: userID}).then((audioResponse) => {
+        if (audioResponse.items && audioResponse.count) {
+          const friends = {};
+
+          friends[userID] = {
+            id: userID,
+            items: audioResponse.items,
+            count: audioResponse.count
+          };
+
+          fulfill(friends);
+        } else reject();
+      }, reject);
+    });
+  }
+
   static getGroups(userID) {
     return new Promise((fulfill, reject) => {
       Api.call('groups.get', {owner_id: userID, extended: true}).then((groupsResponse) => {
@@ -85,6 +109,25 @@ export default class User {
 
           fulfill(groups);
         }
+      }, reject);
+    });
+  }
+
+  static getGroupAudio(id) {
+    const groupID = Number(id) * -1;
+    return new Promise((fulfill, reject) => {
+      Api.call('audio.get', {owner_id: groupID}).then((audioResponse) => {
+        if (audioResponse.items && audioResponse.count) {
+          const groups = {};
+
+          groups[id] = {
+            id: id,
+            items: audioResponse.items,
+            count: audioResponse.count
+          };
+
+          fulfill(groups);
+        } else reject();
       }, reject);
     });
   }

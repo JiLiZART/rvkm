@@ -4,7 +4,7 @@ import { CircularProgress, List, ListItem } from 'material-ui';
 export default class Albums extends Component {
 
   render() {
-    const { albums, playlist } = this.props;
+    const { albums, playlist, onItemClick } = this.props;
     const { fetching, error, items } = albums.toJS();
     let content;
 
@@ -21,11 +21,10 @@ export default class Albums extends Component {
         const item = items[key];
 
         return (
-          <ListItem
-            disabled={item.id === playlist.id}
-            primaryText={item.title}
-            key={key}
-            onClick={() => this.handleItemClick(item)}
+          <ListItem key={key}
+                    disabled={item.id === playlist.id}
+                    primaryText={item.title}
+                    onClick={() => onItemClick(item)}
             />
         );
       });
@@ -37,9 +36,4 @@ export default class Albums extends Component {
       </List>
     );
   }
-
-  handleItemClick(item) {
-    this.props.onItemClick(item);
-  }
-
 }

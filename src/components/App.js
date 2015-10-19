@@ -11,7 +11,7 @@ import Albums from './Albums.js';
 import Groups from './Groups.js';
 import Friends from './Friends.js';
 
-import * as actions from '../actions';
+import * as actions from 'actions';
 
 import styles from 'styles/blocks/music.styl';
 
@@ -54,22 +54,23 @@ import styles from 'styles/blocks/music.styl';
             onLogin={() => dispatch(actions.session.login())}
             />
           <Player>
-            <Info
-              player={player}
-              />
+            <Info player={player} />
             <Timeline
               audioContext={audioContext}
               onProgress={val => dispatch(actions.player.progress(val))}
-              onSeek={pos => dispatch(actions.player.seek(pos))}
+              onSeek={pos => dispatch(actions.player.seekStart(pos))}
               onEnd={() => dispatch(actions.player.end())}
               />
             <Controls
               audioContext={audioContext}
+              playlist={playlist}
+              player={player}
               onPlay={() => dispatch(actions.player.play())}
+              onLoad={(file) => dispatch(actions.player.load(file))}
               onPause={() => dispatch(actions.player.pause())}
-              onPrev={() => dispatch(actions.player.prev())}
-              onNext={() => dispatch(actions.player.next())}
               onVolume={(value) => dispatch(actions.player.volume(value))}
+              onPrev={(file) => dispatch(actions.player.load(file))}
+              onNext={(file) => dispatch(actions.player.load(file))}
               onSeekEnd={() => dispatch(actions.player.seekEnd())}
               />
           </Player>
@@ -92,7 +93,7 @@ import styles from 'styles/blocks/music.styl';
           <Groups
             groups={groups}
             playlist={playlist}
-            onItemClick={(item) => dispatch(actions.playlist.load(item))}
+            onItemClick={(item) => dispatch(actions.groups.load(item))}
             />
         </div>
 
@@ -100,7 +101,7 @@ import styles from 'styles/blocks/music.styl';
           <Friends
             friends={friends}
             playlist={playlist}
-            onItemClick={(item) => dispatch(actions.playlist.load(item))}
+            onItemClick={(item) => dispatch(actions.friends.load(item))}
             />
         </div>
       </section>

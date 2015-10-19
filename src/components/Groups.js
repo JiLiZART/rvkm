@@ -3,7 +3,7 @@ import { CircularProgress, Avatar, List, ListItem } from 'material-ui';
 
 export default class Groups extends Component {
   render() {
-    const { groups } = this.props;
+    const { groups, onItemClick } = this.props;
     const { fetching, error, items } = groups.toJS();
 
     let content;
@@ -19,9 +19,13 @@ export default class Groups extends Component {
     if (!error && !fetching) {
       content = Object.keys(items).map((key) => {
         const item = items[key];
-        const avatar = (<Avatar src={item.avatar} />);
+        const avatar = (<Avatar src={item.avatar}/>);
 
-        return (<ListItem key={key} leftAvatar={avatar} primaryText={item.title} />);
+        return (<ListItem key={key}
+                          leftAvatar={avatar}
+                          primaryText={item.title}
+                          onClick={() => onItemClick(item)}
+          />);
       });
     }
 
