@@ -15,16 +15,12 @@ gulp.task('assets', (cb) => gulp.src('src/public/**').pipe(gulp.dest('dist/')).p
 
 gulp.task('clean', (cb) => del(['dist/'], cb));
 
-gulp.task('build', ['clean'], (cb) => {
-  const bundler = webpack(config.production);
+gulp.task('build', ['clean'], (cb) => webpack(config.production).run((err, stats) => {
+  if (err) console.error(err);
 
-  bundler.run(function (err, stats) {
-    if (err) console.error(err);
+  console.log(stats.toString());
 
-    console.log(stats.toString());
-
-    cb();
-  });
-});
+  cb();
+}));
 
 gulp.task('ghpages', ['build'], () => gulp.src('dist/**/*').pipe(ghPages()));
