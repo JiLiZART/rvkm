@@ -3,31 +3,34 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import { reduxReactRouter, ReduxRouter } from 'redux-router';
-import promiseMiddleware from 'redux-promise';
+import { Route } from 'react-router';
 
 import { Provider } from 'react-redux';
-import { Route } from 'react-router';
 import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
-import createHistory from 'history/lib/createBrowserHistory';
+import createHistory from 'history/lib/createHashHistory';
 
-import { thunkMiddleware } from 'middlewares';
+import { thunkMiddleware, promiseMiddleware } from 'middlewares';
+
 import * as reducers from 'reducers';
 import * as actions from 'actions';
-import { IndexPage, AlbumPage } from 'pages';
 import { AudioContext } from 'services';
 
+import { AppPage, AlbumsPage, PlaylistPage } from 'pages';
+
 let finalCreateStore;
+
+const middlewares = applyMiddleware(promiseMiddleware, thunkMiddleware);
 
 if (__DEVTOOLS__) {
   const { devTools } = require('redux-devtools');
   finalCreateStore = compose(
-    applyMiddleware(promiseMiddleware, thunkMiddleware),
+    middlewares,
     reduxReactRouter({createHistory}),
     devTools()
   )(createStore);
 } else {
   finalCreateStore = compose(
-    applyMiddleware(promiseMiddleware, thunkMiddleware),
+    middlewares,
     reduxReactRouter({createHistory})
   )(createStore);
 }
@@ -35,6 +38,8 @@ if (__DEVTOOLS__) {
 const reducer = combineReducers(reducers);
 const store = finalCreateStore(reducer);
 const audioContext = AudioContext.create();
+
+store.audio = audioContext;
 
 injectTapEventPlugin();
 
@@ -86,17 +91,15 @@ export default class Root extends Component {
     return (
       <div>
         <Provider store={store}>
-          {() => (
-
+          { () => (
             <ReduxRouter store={store}>
-              <Route path="/" component={IndexPage} audioContext={audioContext}>
-                <Route path="album" component={AlbumPage}/>
-                <Route path="album/:album" component={AlbumPage}/>
-                <Route path="album/:album/:audio" component={AlbumPage}/>
+              <Route path="/" component={AppPage} store={store}>
+                <Route path="albums" component={AlbumsPage} store={store}>
+                  <Route path=":album" component={PlaylistPage} store={store}/>
+                </Route>
               </Route>
             </ReduxRouter>
-
-          )}
+          ) }
         </Provider>
         {devtools}
         <div id="vk-api-transport"></div>

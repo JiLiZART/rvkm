@@ -1,23 +1,16 @@
 import { createAction } from 'redux-actions';
 import { User } from 'services';
 
-const albums = require('./albums');
-const groups = require('./groups');
-const friends = require('./friends');
-
 export const init = createAction('SESSION_INIT');
 export const start = createAction('SESSION_START', session => session);
 
-export function status() {
+export const status = createAction('SESSION_STATUS', () => {
   return (dispatch) => {
     User.status().then((session) => {
       dispatch(start(session));
-      dispatch(albums.fetch(session.mid));
-      dispatch(groups.fetch(session.mid));
-      dispatch(friends.fetch(session.mid));
     }, console.error.bind(console));
   };
-}
+});
 
 export const loginStart = createAction('SESSION_LOGIN_START');
 export const loginSuccess = createAction('SESSION_LOGIN_SUCCESS');
@@ -29,9 +22,6 @@ export function login() {
     User.login().then((session) => {
       dispatch(loginSuccess());
       dispatch(start(session));
-      dispatch(albums.fetch(session.mid));
-      dispatch(groups.fetch(session.mid));
-      dispatch(friends.fetch(session.mid));
     }, console.error.bind(console));
   };
 }
@@ -39,7 +29,7 @@ export function login() {
 export const logoutStart = createAction('SESSION_LOGOUT_START');
 export const logoutSuccess = createAction('SESSION_LOGOUT_SUCCESS');
 
-export function logout() {
+export const logout = createAction('SESSION_LOGOUT', () => {
   return (dispatch) => {
     dispatch(logoutStart());
 
@@ -47,4 +37,4 @@ export function logout() {
       dispatch(logoutSuccess());
     }, console.error.bind(console));
   };
-}
+});

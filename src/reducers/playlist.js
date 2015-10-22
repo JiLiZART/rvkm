@@ -32,7 +32,7 @@ export default handleActions({
   PLAYLIST_SUCCESS: (state, action) => {
     const { payload } = action;
 
-    return state.mergeDeep({
+    return state.merge({
       fetching: false,
       error: false,
       items: payload.items,

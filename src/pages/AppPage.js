@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import Player from './Player.js';
-import User from './User.js';
-import Info from './Info.js';
-import Controls from './Controls.js';
-import Timeline from './Timeline.js';
-import Playlist from './Playlist.js';
-import Albums from './Albums.js';
-import Groups from './Groups.js';
-import Friends from './Friends.js';
+import {
+  User,
+  Player,
+  Info,
+  Timeline,
+  Controls
+} from 'components';
+
+import { CircularProgress, List, ListItem } from 'material-ui';
 
 import * as actions from 'actions';
 
@@ -25,42 +25,59 @@ import styles from 'styles/blocks/music.styl';
     friends: state.friends,
     router: state.router
   };
-})
-class App extends Component {
+}) class AppPage extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loggedin: false
+    };
+  }
+
+  componentDidMount() {
+    const { store } = this.props.route;
+
+    store.subscribe(this.onStoreChanges.bind(this));
+  }
+
+  onStoreChanges() {
+    const { store } = this.props.route;
+    const { session } = store.getState();
+
+    this.setState({
+      loggedin: session.get('mid')
+    });
+  }
 
   render() {
     const {
       session,
       player,
       playlist,
-      albums,
-      groups,
-      friends,
-      router,
-
-      dispatch,
-
-      audioContext
-
+      children,
+      dispatch
       } = this.props;
 
-    console.log('routerState', router);
-    const albumID = router.params.album;
+    const { loggedin } = this.state;
 
-    if (albumID) {
-      //dispatch(actions.albums.load(albums[albumID]));
+    const audioContext = this.props.route.store.audio;
+
+    if (!loggedin) {
+      return (<CircularProgress mode="indeterminate" size={1.5}/>);
     }
 
     return (
       <section className={styles.music}>
         <User
-            session={session}
-            onLogout={() => dispatch(actions.session.logout())}
-            onLogin={() => dispatch(actions.session.login())}
-            />
+          session={session}
+          onLogout={() => dispatch(actions.session.logout())}
+          onLogin={() => dispatch(actions.session.login())}
+          />
+
         <div className={styles.music__col}>
           <Player>
-            <Info player={player} />
+            <Info player={player}/>
             <Timeline
               audioContext={audioContext}
               onProgress={val => dispatch(actions.player.progress(val))}
@@ -80,39 +97,21 @@ class App extends Component {
               onSeekEnd={() => dispatch(actions.player.seekEnd())}
               />
           </Player>
-          <Playlist
-            playlist={playlist}
-            player={player}
-            onFileClick={(file) => dispatch(actions.player.load(file))}
-            />
         </div>
 
         <div className={styles.music__col}>
-          <Albums
-            albums={albums}
-            playlist={playlist}
-            onItemClick={(item) => dispatch(actions.albums.load(item))}
-            />
+          <List className="menu">
+            <ListItem primaryText="Albums" href="#/albums"/>
+            <ListItem primaryText="Groups" href="#/groups"/>
+            <ListItem primaryText="Friends" href="#/friends"/>
+          </List>
         </div>
 
-        <div className={styles.music__col}>
-          <Groups
-            groups={groups}
-            playlist={playlist}
-            onItemClick={(item) => dispatch(actions.groups.load(item))}
-            />
-        </div>
+        {children}
 
-        <div className={styles.music__col}>
-          <Friends
-            friends={friends}
-            playlist={playlist}
-            onItemClick={(item) => dispatch(actions.friends.load(item))}
-            />
-        </div>
       </section>
     );
   }
 }
 
-export default App;
+export default AppPage;

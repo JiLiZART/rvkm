@@ -1,6 +1,13 @@
-import App from './App.js';
-import File from './File.js';
-import Playlist from './Playlist.js';
-import Player from './Player.js';
+const comps = {
+  Player: require('./Player'),
+  User: require('./User'),
+  Info: require('./Info'),
+  Controls: require('./Controls'),
+  Timeline: require('./Timeline'),
+  Playlist: require('./Playlist'),
+  Albums: require('./Albums'),
+  Groups: require('./Groups'),
+  Friends: require('./Friends')
+};
 
-export { App, File, Playlist, Player };
+module.exports = comps;

@@ -7,6 +7,7 @@ var config = require('./webpack.config').development;
 
 var app = express();
 var compiler = webpack(config);
+var PORT = 3000;
 
 app.use(require('webpack-dev-middleware')(compiler, {
   noInfo: false,
@@ -18,7 +19,14 @@ app.use(require('webpack-dev-middleware')(compiler, {
 
 app.use(require('webpack-hot-middleware')(compiler));
 
-app.listen(3000, 'localhost', function (err) {
+// This is fired every time the server side receives a request
+app.use(handleRender);
+
+// We are going to fill these out in the sections to follow
+function handleRender(req, res) { /* ... */ }
+function renderFullPage(html, initialState) { /* ... */ }
+
+app.listen(PORT, 'localhost', function (err) {
   if (err) {
     console.log(err);
     return;

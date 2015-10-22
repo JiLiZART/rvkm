@@ -133,6 +133,8 @@ export default class User {
   }
 
   static getAlbums(userID) {
+    console.log('User.getAlbums', userID);
+
     return new Promise((fulfill, reject) => {
       Api.call('audio.get', {owner_id: userID}).then((audioResponse) => {
         if (audioResponse.items && audioResponse.count) {

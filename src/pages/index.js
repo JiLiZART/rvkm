@@ -1,4 +1,5 @@
-import IndexPage from './IndexPage.js';
-import AlbumPage from './AlbumPage.js';
+import AppPage from './AppPage.js';
+import PlaylistPage from './PlaylistPage.js';
+import AlbumsPage from './AlbumsPage.js';
 
-export { IndexPage, AlbumPage };
+export { AppPage, AlbumsPage, PlaylistPage };

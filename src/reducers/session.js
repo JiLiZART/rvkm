@@ -1,7 +1,7 @@
 import { fromJS } from 'immutable';
 import { handleActions } from 'redux-actions';
 
-const defaultState = fromJS({user: false});
+const defaultState = fromJS({user: false, mid: false});
 
 export default handleActions({
   SESSION_INIT: (state) => {
