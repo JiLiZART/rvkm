@@ -4,13 +4,13 @@ import { AppBar, FlatButton } from 'material-ui';
 
 export default class User extends Component {
   render() {
-    const { session } = this.props;
+    const { session, onLogout, onLogin } = this.props;
     const loggedIn = session.get('mid', false);
 
-    let loginBtn = (<FlatButton label="Logout" onClick={this.handleLogout.bind(this)}/>);
+    let loginBtn = (<FlatButton label="Logout" onClick={() => onLogout()}/>);
 
     if (!loggedIn) {
-      loginBtn = (<FlatButton label="Login" onClick={this.handleLogin.bind(this)}/>);
+      loginBtn = (<FlatButton label="Login" onClick={() => onLogin()}/>);
     }
 
     return (
@@ -19,13 +19,4 @@ export default class User extends Component {
         iconElementRight={loginBtn}/>
     );
   }
-
-  handleLogout() {
-    this.props.onLogout();
-  }
-
-  handleLogin() {
-    this.props.onLogin();
-  }
-
 }
