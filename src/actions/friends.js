@@ -9,10 +9,9 @@ const playlist = require('./playlist.js');
 
 export function load(friend) {
   return (dispatch) => {
-    console.log('friends load', friend);
     dispatch(playlist.start());
 
-    User.getFriendAudio(friend.id).then((items) => {
+    User.getFriendAudio(friend).then((items) => {
       dispatch(success(items));
       dispatch(playlist.load(items[friend.id]));
     }, () => dispatch(playlist.error()));

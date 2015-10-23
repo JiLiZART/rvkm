@@ -8,7 +8,7 @@ export const status = createAction('SESSION_STATUS', () => {
   return (dispatch) => {
     User.status().then((session) => {
       dispatch(start(session));
-    }, console.error.bind(console));
+    });
   };
 });
 
@@ -22,7 +22,7 @@ export function login() {
     User.login().then((session) => {
       dispatch(loginSuccess());
       dispatch(start(session));
-    }, console.error.bind(console));
+    });
   };
 }
 
@@ -35,6 +35,6 @@ export const logout = createAction('SESSION_LOGOUT', () => {
 
     User.logout().then(() => {
       dispatch(logoutSuccess());
-    }, console.error.bind(console));
+    });
   };
 });

@@ -1,7 +1,7 @@
 import { fromJS } from 'immutable';
 import { handleActions } from 'redux-actions';
 
-const playlistState = fromJS({
+const defaultState = fromJS({
   fetching: false,
   error: false,
   items: [],
@@ -19,13 +19,9 @@ export default handleActions({
   },
 
   PLAYLIST_ERROR: (state, action) => {
-    const { payload } = action;
-
-    return state.mergeDeep({
+    return state.merge({
       fetching: false,
-      error: true,
-      items: payload,
-      count: payload.length
+      error: action.payload
     });
   },
 
@@ -41,4 +37,4 @@ export default handleActions({
       title: payload.title
     });
   }
-}, playlistState);
+}, defaultState);

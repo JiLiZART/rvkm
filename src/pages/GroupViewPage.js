@@ -10,11 +10,11 @@ import * as actions from 'actions';
     session: state.session,
     player: state.player,
     playlist: state.playlist,
-    albums: state.albums,
+    groups: state.groups,
     router: state.router
   };
 })
-class PlaylistPage extends Component {
+class GroupViewPage extends Component {
 
   componentDidMount() {
     this.loadPlaylistData(this.props);
@@ -37,14 +37,14 @@ class PlaylistPage extends Component {
   }
 
   loadPlaylistData(props) {
-    const { dispatch, playlist, albums, params: { album } } = props;
-    const { items } = albums.toJS();
-    const id = Number(album);
+    const { dispatch, playlist, groups, params: { group } } = props;
+    const { items } = groups.toJS();
+    const id = Number(group);
 
     if (items[id] && id !== playlist.get('id')) {
-      dispatch(actions.albums.load(items[id]));
+      dispatch(actions.groups.load(items[id]));
     }
   }
 }
 
-export default PlaylistPage;
+export default GroupViewPage;

@@ -73,17 +73,16 @@ export default class User {
     });
   }
 
-  static getFriendAudio(userID) {
+  static getFriendAudio(user) {
+    const id = user.id;
     return new Promise((fulfill, reject) => {
-      Api.call('audio.get', {owner_id: userID}).then((audioResponse) => {
+      Api.call('audio.get', {owner_id: id}).then((audioResponse) => {
         if (audioResponse.items && audioResponse.count) {
           const friends = {};
 
-          friends[userID] = {
-            id: userID,
-            items: audioResponse.items,
-            count: audioResponse.count
-          };
+          friends[id] = user;
+          friends[id].items = audioResponse.items;
+          friends[id].count = audioResponse.count;
 
           fulfill(friends);
         } else reject();
@@ -113,18 +112,16 @@ export default class User {
     });
   }
 
-  static getGroupAudio(id) {
-    const groupID = Number(id) * -1;
+  static getGroupAudio(group) {
+    const id = Number(group.id) * -1;
     return new Promise((fulfill, reject) => {
-      Api.call('audio.get', {owner_id: groupID}).then((audioResponse) => {
+      Api.call('audio.get', {owner_id: id}).then((audioResponse) => {
         if (audioResponse.items && audioResponse.count) {
           const groups = {};
 
-          groups[id] = {
-            id: id,
-            items: audioResponse.items,
-            count: audioResponse.count
-          };
+          groups[id] = group;
+          groups[id].items = audioResponse.items;
+          groups[id].count = audioResponse.count;
 
           fulfill(groups);
         } else reject();
@@ -133,8 +130,6 @@ export default class User {
   }
 
   static getAlbums(userID) {
-    console.log('User.getAlbums', userID);
-
     return new Promise((fulfill, reject) => {
       Api.call('audio.get', {owner_id: userID}).then((audioResponse) => {
         if (audioResponse.items && audioResponse.count) {

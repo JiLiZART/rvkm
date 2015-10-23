@@ -3,7 +3,7 @@ import { CircularProgress, Avatar, List, ListItem } from 'material-ui';
 
 export default class Friends extends Component {
   render() {
-    const { friends, onItemClick } = this.props;
+    const { friends } = this.props;
     const { fetching, error, items } = friends.toJS();
 
     let content;
@@ -19,11 +19,12 @@ export default class Friends extends Component {
     if (!error && !fetching) {
       content = Object.keys(items).map((key) => {
         const item = items[key];
+        const url = '#/friends/' + item.id;
 
         return (<ListItem key={key}
                           leftAvatar={<Avatar src={item.avatar} />}
                           primaryText={item.title}
-                          onClick={() => onItemClick(item)}
+                          href={url}
           />);
       });
     }
