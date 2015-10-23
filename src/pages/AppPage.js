@@ -9,7 +9,7 @@ import {
   Controls
 } from 'components';
 
-import { CircularProgress, List, ListItem } from 'material-ui';
+import { List, ListItem } from 'material-ui';
 
 import * as actions from 'actions';
 
