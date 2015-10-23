@@ -21,7 +21,7 @@ import styles from 'styles/blocks/controls.styl';
   componentDidMount() {
     const { audioContext } = this.props;
 
-    this.setAudioContext(audioContext);
+    this.setAudioContext(audioContext).bindHandlers();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -88,6 +88,14 @@ import styles from 'styles/blocks/controls.styl';
     this.audioContext = audio;
 
     return this;
+  }
+
+  bindHandlers() {
+    this.audioContext.on('ended', this.handleFileEnd.bind(this));
+  }
+
+  handleFileEnd() {
+    this.handleNextClick();
   }
 
   handlePauseClick() {

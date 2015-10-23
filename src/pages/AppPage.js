@@ -64,7 +64,15 @@ import styles from 'styles/blocks/music.styl';
     const audioContext = this.props.route.store.audio;
 
     if (!loggedin) {
-      return (<CircularProgress mode="indeterminate" size={1.5}/>);
+      return (
+        <section className={styles.music}>
+          <User
+            session={session}
+            onLogout={() => dispatch(actions.session.logout())}
+            onLogin={() => dispatch(actions.session.login())}
+            />
+        </section>
+      );
     }
 
     return (

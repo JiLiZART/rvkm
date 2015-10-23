@@ -55,7 +55,7 @@ class AudioContext {
       const endRange = this.getSeekable().end(0);
 
       if (value > startRange && value < endRange) {
-        this.setCurrentTime(nextPosition);
+        this.setCurrentTime(value);
         return true;
       }
     }

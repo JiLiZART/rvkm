@@ -38,7 +38,7 @@ import styles from 'styles/blocks/music.styl';
           <section className={styles.music__col}>
             <Albums albums={albums} playlist={playlist} onItemClick={(item) => dispatch(actions.albums.load(item))}/>
           </section>
-          <section className={styles.music__col + ' ' + styles.music__col_2}>
+          <section className={styles.music__col}>
             {children}
           </section>
         </div>

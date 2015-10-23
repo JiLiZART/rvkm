@@ -90,7 +90,7 @@ const development = {
   output: {
     path: assetPath,
     filename: 'main.js',
-    publicPath: '/'
+    publicPath: ''
   },
   cache: true,
   debug: true,
@@ -144,7 +144,7 @@ const production = {
   output: {
     path: assetPath,
     filename: 'main-[hash].js',
-    publicPath: '/'
+    publicPath: ''
   },
   devtool: 'sourcemap',
   entry: [
