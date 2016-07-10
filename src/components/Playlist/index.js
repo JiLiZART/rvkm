@@ -61,6 +61,14 @@ class Playlist extends Component {
   render() {
     const {playlist} = this.props;
 
+    if (!playlist) {
+      return (
+        <section className={b}>
+          <div className={b('loading')}><Error title="Ничего не выбрано" desc="Выберите элемент из списка слева" /></div>
+        </section>
+      );
+    }
+
     if (playlist.error) {
       return (
         <section className={b}>

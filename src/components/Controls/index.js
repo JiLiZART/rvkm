@@ -14,7 +14,7 @@ import AudioPlayer from 'models/AudioPlayer';
 import saveAs from 'file-saver';
 
 import {connect} from 'react-redux';
-import {play, pause, next, prev, volume} from 'actions/player';
+import {play, pause, next, prev, volume, mute, max, shuffle, loop, end} from 'actions/player';
 
 const mapStateToProps = (state) => {
   return {
@@ -35,8 +35,16 @@ class Controls extends Component {
   }
 
   componentDidMount() {
+    const {player} = this.props;
+
     AudioPlayer.on('progress', () => {
       this.setState(AudioPlayer.getInfo());
+    });
+
+    AudioPlayer.on('ended', (e) => {
+      if (!player.loop) {
+        this.onNextClick();
+      }
     });
   }
 
@@ -59,15 +67,39 @@ class Controls extends Component {
   };
 
   onPrevClick = () => {
-    const {prev} = this.props;
+    const {prev, player} = this.props;
+    const {items} = player.playlist;
+    let audio;
 
-    prev();
+    if (player.shuffle) {
+      audio = items[Math.floor(Math.random() * items.length)];
+    } else {
+      items.forEach((item, idx) => {
+        if (item.id === player.audio.id) {
+          audio = idx === 0 ? items[items.length-1] : items[idx-1]
+        }
+      });
+    }
+
+    prev(audio);
   };
 
   onNextClick = () => {
-    const {next} = this.props;
+    const {next, player} = this.props;
+    const {items} = player.playlist;
+    let audio;
 
-    next();
+    if (player.shuffle) {
+      audio = items[Math.floor(Math.random() * items.length)];
+    } else {
+      items.forEach((item, idx) => {
+        if (item.id === player.audio.id) {
+          audio = idx === items.length-1 ? items[0] : items[idx+1]
+        }
+      });
+    }
+
+    next(audio);
   };
 
   onVolumeChange = (component, value) => {
@@ -86,9 +118,27 @@ class Controls extends Component {
   onAddClick = () => {};
 
   onMuteClick = () => {
+    const {mute} = this.props;
+
+    mute();
   };
-  
+
   onMaxClick = () => {
+    const {max} = this.props;
+
+    max();
+  };
+
+  onShuffleClick = () => {
+    const {shuffle} = this.props;
+
+    shuffle();
+  };
+
+  onLoopClick = () => {
+    const {loop} = this.props;
+
+    loop();
   };
 
   render() {
@@ -119,9 +169,11 @@ class Controls extends Component {
           </Popup>
         </div>
         <div className={controls('track-container')}>
-          <Track className={controls('track')} size="m" duration={time || audio.getDuration()} artist={audio.getArtist()} song={audio.getSong()}/>
+          <Track className={controls('track')} size="m" duration={time} artist={audio.getArtist()} song={audio.getSong()}/>
         </div>
         <div className={controls('volume')}>
+          <Button className={controls('btn', {loop: true})} onClick={this.onLoopClick} size="m" view="plain" icon={<Icon name="repeat" style={player.loop ? '':'light'} size="m" />}/>
+          <Button className={controls('btn', {shuffle: true})} onClick={this.onShuffleClick} size="m" view="plain" icon={<Icon name="shuffle" style={player.shuffle ? '':'light'} size="m" />}/>
           <Button className={controls('btn', {mute: true})} onClick={this.onMuteClick} size="m" view="plain" icon={<Icon name="volume_mute" size="m" />}/>
           <div className={controls('volume-slider')}><InputRange value={player.volume} maxValue={100} minValue={0} onChange={this.onVolumeChange}/></div>
           <Button className={controls('btn', {max: true})} onClick={this.onMaxClick} size="l" view="plain" icon={<Icon name="volume_up" size="l" />}/>
@@ -133,5 +185,5 @@ class Controls extends Component {
 
 export default connect(
   mapStateToProps,
-  {play, pause, next, prev, volume}
+  {play, pause, next, prev, volume, mute, max, shuffle, loop}
 )(Controls);

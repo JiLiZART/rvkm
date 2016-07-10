@@ -36,6 +36,7 @@ $rowHeight = 42px
     order 1
 
     +mobile()
+      width 100%
       margin-right 0
       order 2
       height $rowHeight
@@ -45,6 +46,7 @@ $rowHeight = 42px
     align-items center
     order 2
     +mobile()
+      width 100%
       order 3
       height $rowHeight
 
@@ -79,4 +81,6 @@ $rowHeight = 42px
 
   .{$ctx}__volume-slider
     width 100%
-    min-width 180px
+
+    +desktop()
+      min-width 300px

@@ -46,15 +46,17 @@ class Albums extends Component {
       fetchRecomended,
       fetchWall,
       fetchPopular,
-      fetchAlbum
+      fetchAlbum,
+      router
     } = this.props;
 
-    if (!params.id) {
-      return;
-    }
+    const {items} = albums;
+    const id = Number(params.id);
+    const getTitle = () => (items.find((item) => item.id === id).title);
 
-    const albumId = Number(params.id);
-    const getAlbumTitle = () => (albums.items.find((album) => album.id === albumId).title);
+    if (!params.id) {
+      router.push('/albums/recomended');
+    }
 
     switch (params.id) {
       case 'all':
@@ -66,7 +68,7 @@ class Albums extends Component {
       case 'popular':
         return fetchPopular(user.getId());
       default:
-        return fetchAlbum(user.getId(), albumId, getAlbumTitle());
+        return fetchAlbum(user.getId(), id, getTitle());
     }
   }
 

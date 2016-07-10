@@ -16,6 +16,8 @@ export const nextSuccess = createAction('PLAYER_NEXT', (player) => player);
 export const prevSuccess = createAction('PLAYER_PREV', (player) => player);
 export const progress = createAction('PLAYER_PROGRESS', (value) => value);
 export const volumeSuccess = createAction('PLAYER_VOLUME', (value) => value);
+export const shuffle = createAction('PLAYER_SHUFFLE', (value) => value);
+export const loop = createAction('PLAYER_LOOP', (value) => value);
 export const end = createAction('PLAYER_END');
 
 export function init() {
@@ -54,16 +56,30 @@ export function pause() {
   };
 }
 
-export function next() {
+export function next(audio) {
   return (dispatch) => {
-    dispatch(nextSuccess());
+    dispatch(load(audio));
     dispatch(play());
+    dispatch(nextSuccess());
   };
 }
 
-export function prev() {
+export function prev(audio) {
   return (dispatch) => {
-    dispatch(prevSuccess());
+    dispatch(load(audio));
     dispatch(play());
+    dispatch(prevSuccess());
+  };
+}
+
+export function mute() {
+  return (dispatch) => {
+    dispatch(volume(0));
+  };
+}
+
+export function max() {
+  return (dispatch) => {
+    dispatch(volume(100));
   };
 }
