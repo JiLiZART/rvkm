@@ -1,39 +1,27 @@
 {
-  "parser": "babel-eslint",
-  "rules": {
-    "indent": [
-      2,
-      2
-    ],
-    "quotes": [
-      2,
-      "single"
-    ],
-    "linebreak-style": [
-      2,
-      "unix"
-    ],
-    "semi": [
-      2,
-      "always"
-    ],
-    "no-reserved-keys": 0,
-    "no-wrap-func": 0,
-    "spaced-line-comment": 0,
-    // disabled dueto eslint error
-    "no-duplicate-case": 0
-  },
-  "env": {
-    "es6": true,
-    "node": true,
-    "browser": true
-  },
-  "extends": ["airbnb", "airplus"],
   "ecmaFeatures": {
     "jsx": true,
-    "experimentalObjectRestSpread": true
+    "modules": true
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parser": "babel-eslint",
+  "rules": {
+    "quotes": [2, "single"],
+    "strict": [2, "never"],
+    "babel/generator-star-spacing": 1,
+    "babel/new-cap": 1,
+    "babel/object-shorthand": 1,
+    "babel/arrow-parens": 1,
+    "babel/no-await-in-loop": 1,
+    "react/jsx-uses-react": 2,
+    "react/jsx-uses-vars": 2,
+    "react/react-in-jsx-scope": 2
   },
   "plugins": [
+    "babel",
     "react"
   ]
 }

@@ -1,4 +1,4 @@
-require('babel/register');
+require('babel-register');
 
 var path = require('path');
 var express = require('express');
@@ -7,7 +7,7 @@ var config = require('./webpack.config').development;
 
 var app = express();
 var compiler = webpack(config);
-var PORT = 3000;
+var PORT = 2000;
 
 app.use(require('webpack-dev-middleware')(compiler, {
   noInfo: false,
@@ -26,7 +26,7 @@ app.use(handleRender);
 function handleRender(req, res) { /* ... */ }
 function renderFullPage(html, initialState) { /* ... */ }
 
-app.listen(PORT, 'localhost', function (err) {
+app.listen(PORT, function (err) {
   if (err) {
     console.log(err);
     return;

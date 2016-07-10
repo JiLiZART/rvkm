@@ -1,0 +1,43 @@
+$ctx = playlist
+
+.{$ctx}
+
+  .{$ctx}__loading
+    height 600px
+    width 100%
+    display flex
+    align-items center
+    justify-content center
+
+  .{$ctx}__item
+    cursor pointer
+    padding 8px
+    margin-bottom 8px
+
+    display table
+    width 100%
+    box-sizing border-box
+
+    &:hover
+      background #f5f7fa
+
+    &_current
+    &_current:hover
+      background #e8edf4
+
+  .{$ctx}__play
+    margin-right 8px
+    padding 6px
+    width 16px
+    height 16px
+    background #577ca1
+    border-radius 50%
+
+  .{$ctx}__controls
+    display table-cell
+    vertical-align middle
+
+  .{$ctx}__track
+    display table-cell
+    vertical-align middle
+    width 100%

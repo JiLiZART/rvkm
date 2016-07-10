@@ -1,0 +1,72 @@
+$ctx = navbar
+
+.{$ctx}
+  position absolute
+  width 100%
+  background #507299
+  height 42px
+  border-bottom 1px solid #466991
+  box-sizing border-box
+
+  .{$ctx}__content
+    padding 0 15px
+    margin 0 auto
+    width 100%
+    max-width 1440px
+    position relative
+    box-sizing border-box
+
+  .{$ctx}__menu
+    padding 9px
+
+  .{$ctx}__item
+    display inline-block
+    vertical-align top
+
+    &_menu
+      +desktop()
+        display none
+
+    &_align_right
+      float right
+
+  .{$ctx}__link
+    display table
+    white-space nowrap
+    line-height 42px
+    height 42px
+    overflow hidden
+    padding 0 10px
+
+    text-decoration none
+    color #fff
+
+    +mobile()
+      padding 0
+
+    &_active,
+    &:hover
+      background #486991
+
+  .{$ctx}__icon
+    display table-cell
+    text-align center
+    width 42px
+
+    .avatar
+    .icon
+      display inline-block
+      vertical-align middle
+
+  .{$ctx}__text
+    display table-cell
+    font-size 13px
+    -webkit-font-smoothing antialiased
+    -moz-osx-font-smoothing grayscale
+    color #fff
+
+    +mobile()
+      display none
+
+    +tablet()
+      display none

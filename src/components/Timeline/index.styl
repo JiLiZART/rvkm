@@ -1,0 +1,89 @@
+$ctx = timeline;
+
+.{$ctx}
+  position absolute
+  bottom (42 - 4)px
+
+  +mobile()
+    bottom (42*3 - 4)px
+
+  width 100%
+
+  font-size 12px
+  line-height 16px
+  text-align center
+
+  color #fff
+  background #e1e8ee
+  user-select none
+  cursor default
+  height 4px
+  transition height .1s
+
+  z-index 2
+
+  +mobile()
+    height 12px
+
+  .{$ctx}__seek,
+  .{$ctx}__trail,
+  .{$ctx}__buffer,
+  .{$ctx}__progress
+    height 100%
+
+  .{$ctx}__trail
+    position relative
+    width 100%
+
+  .{$ctx}__buffer,
+  .{$ctx}__seek,
+  .{$ctx}__progress
+    position absolute
+    top 0
+    left 0
+    width 0
+
+  .{$ctx}__buffer
+    transform translateZ(0)
+    background #b8c7d7
+
+  .{$ctx}__seek
+    opacity 0
+    transform translateZ(0)
+    transition opacity 0.4s
+    background #577ca1
+
+    .{$ctx}:hover &,
+    &:hover
+      opacity 0.4
+
+  &.{$ctx}_seek
+    cursor pointer
+
+  &.{$ctx}_seek .{$ctx}__seek
+    opacity 0.4
+
+  .{$ctx}__progress
+    transform translateZ(0)
+    overflow hidden
+    background #577ca1
+
+  .{$ctx}__info
+    position relative
+    color #515151
+
+  .{$ctx}__progress .{$ctx}__info
+    color #fff
+
+  .{$ctx}__time
+    position absolute
+    top 0
+    left 12px
+
+  .{$ctx}__length
+    position absolute
+    top 0
+    right 20px
+
+.app__bar:hover .{$ctx}
+  height 12px

@@ -1,0 +1,48 @@
+$ctx = track
+
+.{$ctx}
+  position relative
+
+
+  &.{$ctx}_playing
+    background #e8edf4
+
+  .{$ctx}__content
+    display table
+    width 100%
+
+  .{$ctx}__left
+  .{$ctx}__right
+    display table-cell
+    vertical-align top
+
+  .{$ctx}__right
+    text-align right
+
+  .{$ctx}__artist
+  .{$ctx}__song
+    display inline-block
+    vertical-align top
+
+  .{$ctx}__artist
+    font-weight 700
+    color #4C6B8F
+
+  .{$ctx}__duration
+    color #8795A5
+
+  &.{$ctx}_size_s
+    font-size 13px
+    line-height 16px
+
+  &.{$ctx}_size_m
+    font-size 13px
+    line-height 16px
+
+  &.{$ctx}_size_l
+    font-size 15px
+    line-height 18px
+
+  &.{$ctx}_size_xl
+    font-size 18px
+    line-height 20px
