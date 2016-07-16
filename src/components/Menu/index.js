@@ -13,7 +13,7 @@ class Menu extends Component {
 
   rowRender = (item) => {
     return (
-      <div className={menu('item')} key={item.id}>
+      <div className={menu('item', {active: item.active})} key={item.id}>
         <Link className={menu('link')} to={item.url}>
           {item.cover ? <span className={menu('cover')}><Avatar className={menu('icon')} src={item.cover} size="l" alt={item.name}/></span> : null}
           <span className={menu('text')}>{item.name}</span>

@@ -1,4 +1,5 @@
-import Api from './Api.js';
+import Api from './Api';
+import Wall from './Wall';
 
 /**
  id  идентификатор аудиозаписи.
@@ -112,6 +113,51 @@ export default class Audio {
     }
 
     return Api.call('audio.get', params);
+  }
+
+  static add(audioID, userID, albumID) {
+    const params = {audio_id: audioID, owner_id: userID};
+
+    if (Number.isInteger(albumID)) {
+      params.album_id = albumID;
+    }
+
+    return Api.call('audio.add', params);
+  }
+
+  static remove(audioID, userID) {
+    return Api.call('audio.delete', {audio_id: audioID, owner_id: userID});
+  }
+
+  static getWall(userID) {
+
+    const isAttachmentAudio = (attachment) => {
+      return attachment.type === 'audio';
+    };
+
+    const fromAttachments = (attachments) => {
+      return (attachments || []).filter(isAttachmentAudio).map((file) => file.audio);
+    };
+
+    const mapPost = (post) => {
+      var audios = [];
+
+      if (Array.isArray(post.attachments) && post.attachments.length) {
+        audios = audios.concat(fromAttachments(post.attachments));
+      }
+
+      if (Array.isArray(post.copy_history) && post.copy_history.length &&
+        Array.isArray(post.copy_history[0].attachments) && post.copy_history[0].attachments.length
+      ) {
+        audios = audios.concat(fromAttachments(post.copy_history[0].attachments));
+      }
+
+      return audios;
+    };
+
+    return Wall.get(userID).then((r) => {
+      return r.items.map(mapPost).reduce((prev, next) => prev.concat(next), [])
+    })
   }
 
   static getPopular(userID, offset = 0, count = 100) {

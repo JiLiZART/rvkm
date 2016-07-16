@@ -7,14 +7,15 @@ import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
 import Error from 'components/Error';
 
-import UserModel from 'models/User';
+import User from 'models/User';
 import Audio from 'models/Audio';
+
 import {connect} from 'react-redux';
 import {load, play, pause, playlist as loadPlaylist} from 'actions/player';
 
 const mapStateToProps = (state) => {
   return {
-    user: new UserModel(state.user),
+    user: new User(state.user),
     player: state.player
   };
 };
@@ -27,14 +28,14 @@ class Playlist extends Component {
     const {player} = this.props;
     const isCurrent = player.audio.id === audio.getId();
     const isPlaying = player.playing;
-    const duration = player.time || audio.getDuration();
+    const duration = audio.getDuration();
 
     return (
       <div className={b('item', {current: isCurrent})} key={i} onClick={() => this.onTrackClick(audio)}>
         <div className={b('controls')}>
           <div className={b('play')}><Icon name={isCurrent && isPlaying ? 'pause' : 'play_arrow'} style="white" size="xs"/></div>
         </div>
-        <Track className={b('track')} size="m" id={audio.getId()} duration={duration} artist={audio.getArtist()} song={audio.getSong()}/>
+        <Track className={b('track')} size="m" id={audio.getId()} url={audio.getUrl()} duration={duration} artist={audio.getArtist()} song={audio.getSong()}/>
       </div>
     )
   };

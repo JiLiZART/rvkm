@@ -11,7 +11,6 @@ import Playlist from 'components/Playlist';
 
 import Audio from 'models/Audio';
 import AudioPlayer from 'models/AudioPlayer';
-import saveAs from 'file-saver';
 
 import {connect} from 'react-redux';
 import {play, pause, next, prev, volume, mute, max, shuffle, loop, end} from 'actions/player';
@@ -30,6 +29,7 @@ class Controls extends Component {
 
     this.state = {
       inPlaylist: false,
+      volume: 100,
       time: 0
     }
   }
@@ -41,7 +41,7 @@ class Controls extends Component {
       this.setState(AudioPlayer.getInfo());
     });
 
-    AudioPlayer.on('ended', (e) => {
+    AudioPlayer.on('ended', () => {
       if (!player.loop) {
         this.onNextClick();
       }
@@ -102,20 +102,13 @@ class Controls extends Component {
     next(audio);
   };
 
-  onVolumeChange = (component, value) => {
-    const {volume} = this.props;
+  onVolumeChange = (e) => {
+    const value = Number(e.target.value);
 
-    volume(value);
+    AudioPlayer.volume(value);
+
+    this.setState({volume: value});
   };
-
-  onDownloadClick = () => {
-    const {player:{audio}} = this.props;
-
-    window.location.href = audio.url;
-  };
-
-  onClearClick = () => {};
-  onAddClick = () => {};
 
   onMuteClick = () => {
     const {mute} = this.props;
@@ -142,7 +135,7 @@ class Controls extends Component {
   };
 
   render() {
-    const {inPlaylist, time} = this.state;
+    const {inPlaylist, time, volume} = this.state;
     const {player} = this.props;
     const audio = Audio.hydrate(player.audio);
     const isPlaying = player.playing;
@@ -159,23 +152,18 @@ class Controls extends Component {
           <Button className={controls('btn', {next: true})} onClick={this.onNextClick} size="m" view="plain" icon={<Icon name="fast_forward" size="m" />}/>
           <Button className={controls('btn', {seq: true})} onClick={this.onSeqClick} size="m" view="plain" icon={<Icon name="playlist_play" size="m" />}/>
 
-          <div className={controls('track-controls')}>
-            <Button className={controls('btn', {remove: true})} onClick={this.onClearClick} size="s" view="plain" icon={<Icon name="clear" size="s" />}/>
-            <Button className={controls('btn', {add: true})} onClick={this.onAddClick} size="s" view="plain" icon={<Icon name="add" size="s" />}/>
-            <Button className={controls('btn', {save: true})} onClick={this.onDownloadClick} size="s" view="plain" icon={<Icon name="file_download" size="s" />}/>
-          </div>
           <Popup visible={inPlaylist} title={player.playlist.title}>
             <Playlist playlist={player.playlist}/>
           </Popup>
         </div>
         <div className={controls('track-container')}>
-          <Track className={controls('track')} size="m" duration={time} artist={audio.getArtist()} song={audio.getSong()}/>
+          <Track className={controls('track')} size="m" id={audio.getId()} url={audio.getUrl()} duration={time} artist={audio.getArtist()} song={audio.getSong()} />
         </div>
         <div className={controls('volume')}>
           <Button className={controls('btn', {loop: true})} onClick={this.onLoopClick} size="m" view="plain" icon={<Icon name="repeat" style={player.loop ? '':'light'} size="m" />}/>
           <Button className={controls('btn', {shuffle: true})} onClick={this.onShuffleClick} size="m" view="plain" icon={<Icon name="shuffle" style={player.shuffle ? '':'light'} size="m" />}/>
           <Button className={controls('btn', {mute: true})} onClick={this.onMuteClick} size="m" view="plain" icon={<Icon name="volume_mute" size="m" />}/>
-          <div className={controls('volume-slider')}><InputRange value={player.volume} maxValue={100} minValue={0} onChange={this.onVolumeChange}/></div>
+          <div className={controls('volume-slider')}><InputRange value={volume} maxValue={100} minValue={0} onChange={this.onVolumeChange}/></div>
           <Button className={controls('btn', {max: true})} onClick={this.onMaxClick} size="l" view="plain" icon={<Icon name="volume_up" size="l" />}/>
         </div>
       </div>

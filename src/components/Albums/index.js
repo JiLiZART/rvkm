@@ -42,7 +42,6 @@ class Albums extends Component {
       params,
       user,
       albums,
-      fetchAll,
       fetchRecomended,
       fetchWall,
       fetchPopular,
@@ -59,8 +58,6 @@ class Albums extends Component {
     }
 
     switch (params.id) {
-      case 'all':
-        return fetchAll(user.getId());
       case 'recomended':
         return fetchRecomended(user.getId());
       case 'wall':
@@ -73,16 +70,19 @@ class Albums extends Component {
   }
 
   mapAlbum = (album) => {
+    const {params} = this.props;
+    const id = params.id;
+
     return {
       id: album.getId(),
       url: `/albums/${album.getId()}`,
-      name: album.getName()
+      name: album.getName(),
+      active: album.getId() == id
     }
   };
 
   static getDefaultItems() {
     return Album.hydrateArray([
-      {id: 'all', title: 'All'},
       {id: 'recomended', title: 'Recomended'},
       {id: 'wall', title: 'Wall'},
       {id: 'popular', title: 'Popular'}

@@ -8,8 +8,7 @@ export const initSuccess = createAction('PLAYER_INIT');
 export const loadStart = createAction('PLAYER_LOAD_FETCHING');
 export const loadSuccess = createAction('PLAYER_LOAD', (file) => file);
 export const loadError = createAction('PLAYER_LOAD_ERROR');
-export const seekStart = createAction('PLAYER_SEEK', (pos) => pos);
-export const seekEnd = createAction('PLAYER_SEEK_END');
+export const seekSuccess = createAction('PLAYER_SEEK', (pos) => pos);
 export const playSuccess = createAction('PLAYER_PLAY');
 export const pauseSuccess = createAction('PLAYER_PAUSE');
 export const nextSuccess = createAction('PLAYER_NEXT', (player) => player);
@@ -81,5 +80,12 @@ export function mute() {
 export function max() {
   return (dispatch) => {
     dispatch(volume(100));
+  };
+}
+
+export function seek(value) {
+  return (dispatch) => {
+    AudioPlayer.seek(value);
+    dispatch(seekSuccess(value));
   };
 }

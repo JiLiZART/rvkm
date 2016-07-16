@@ -5,6 +5,20 @@ import {hide as menuHide} from './menu';
 export const start = createAction('AUDIOS_FETCHING');
 export const error = createAction('AUDIOS_ERROR', (err) => err);
 export const load = createAction('AUDIOS', (item) => item);
+export const addSuccess = createAction('AUDIOS_ADD', (item) => item);
+export const removeSuccess = createAction('AUDIOS_REMOVE', (item) => item);
+
+export function add(audioID, userID, albumID) {
+  return (dispatch) => {
+    return Audio.add(audioID, userID, albumID).then(() => dispatch(addSuccess()));
+  };
+}
+
+export function remove(audioID, userID) {
+  return (dispatch) => {
+    return Audio.remove(audioID, userID).then(() => dispatch(removeSuccess()));
+  };
+}
 
 export function fetchAll(albumID) {
   return (dispatch) => {
@@ -29,8 +43,23 @@ export function fetchRecomended(userID) {
   };
 }
 
-export function fetchWall(albumID) {
+export function fetchWall(userID) {
   return (dispatch) => {
+    dispatch(start());
+    return Audio.getWall(userID, 0, 1000).then((items) => {
+      const response = {
+        id: 'wall',
+        title: 'Wall',
+        items,
+        count: items.length
+      };
+
+      console.log('fetchWall', items);
+
+      dispatch(load(response));
+      dispatch(menuHide());
+
+    }, (err) => dispatch(error(err)));
   };
 }
 

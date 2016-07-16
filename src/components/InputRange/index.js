@@ -1,5 +1,4 @@
-import InputRange from 'react-input-range';
-import 'react-input-range/dist/react-input-range.css';
+import InputRange from 'react-range';
 import './index.styl';
 
 export default InputRange;

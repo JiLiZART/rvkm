@@ -33,13 +33,13 @@ class AudioPlayer {
     this.audio.pause();
   }
 
-  position(value) {
+  seek(value) {
     if (value > 0) {
       const startRange = this.getSeekable().start(0);
       const endRange = this.getSeekable().end(0);
 
       if (value > startRange && value < endRange) {
-        this.setCurrentTime(value);
+        this.audio.currentTime = value;
         return true;
       }
     }
@@ -51,17 +51,6 @@ class AudioPlayer {
     this.audio.volume = Number(value / 100);
 
     return this;
-  }
-
-  getBlob() {
-    return new Promise((fulfill, reject) => {
-      var request = new XMLHttpRequest();
-      request.open('GET', this.audio.src, true);
-      request.responseType = 'blob';
-      request.onload = () => fulfill(request.response);
-      request.onerror = () => reject(request.responseText);
-      request.send();
-    });
   }
 
   getVolume() {
