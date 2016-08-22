@@ -1,27 +1,17 @@
-import { createAction } from 'redux-actions';
-import { User } from 'services';
+import {createAction} from 'redux-actions';
+import Friends from 'models/Friends';
+import {show} from './menu';
 
-export const start = createAction('FRIENDS_START');
+export const start = createAction('FRIENDS_FETCHING');
 export const error = createAction('FRIENDS_ERROR');
-export const success = createAction('FRIENDS_SUCCESS', (items = {}) => items);
-
-const playlist = require('./playlist.js');
-
-export function load(friend) {
-  return (dispatch) => {
-    dispatch(playlist.start());
-
-    User.getFriendAudio(friend).then((items) => {
-      dispatch(success(items));
-      dispatch(playlist.load(items[friend.id]));
-    }, () => dispatch(playlist.error()));
-  };
-}
+export const load = createAction('FRIENDS', (r) => r);
 
 export function fetch(userID) {
   return (dispatch) => {
     dispatch(start());
-
-    User.getFriends(userID).then((items) => dispatch(success(items)), () => dispatch(error()));
+    return Friends.getById(userID, 0, 1000).then((r) => {
+      dispatch(load(r));
+      dispatch(show());
+    }, () => dispatch(error()));
   };
 }

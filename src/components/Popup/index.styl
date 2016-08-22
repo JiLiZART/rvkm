@@ -1,0 +1,44 @@
+$ctx = popup
+$playerHeight = 42px
+
+.{$ctx}
+  position fixed
+  top 0
+  left 0
+  right 0
+  max-width 1440px
+  width 100%
+  margin 0 auto
+  bottom 42px
+  padding 0
+  z-index 0
+  border 0
+  box-shadow none
+  background #fff
+  display none
+
+  +mobile()
+    bottom ($playerHeight*3)
+
+  &.{$ctx}_visible
+    display block
+
+  .{$ctx}__header
+    border-bottom 1px solid #e7e8ec
+
+  .{$ctx}__close
+    float right
+    padding 10px
+    cursor pointer
+
+  .{$ctx}__title
+    line-height 40px
+    padding-left 10px
+
+  .{$ctx}__body
+    overflow-y auto
+    width 100%
+    position fixed
+    top 42px
+    bottom 42px
+    z-index 0

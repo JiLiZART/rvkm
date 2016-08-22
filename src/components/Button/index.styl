@@ -1,0 +1,188 @@
+$ctx = button
+
+.{$ctx}
+  font-family -apple-system, BlinkMacSystemFont, Roboto, 'Open Sans', 'Helvetica Neue', sans-serif
+
+  position relative
+
+  display inline-block
+
+  margin 0
+  padding 0
+
+  user-select none
+
+  color #000
+  border 0
+  border-radius 3px
+  outline 0
+  background rgba(0, 0, 0, 0.2)
+
+  text-align center
+  white-space nowrap
+  cursor pointer
+
+  -webkit-tap-highlight-color rgba(0, 0, 0, 0)
+
+  &::-moz-focus-inner
+    padding 0
+    border 0
+
+  .{$ctx}__text
+    position relative
+
+    display inline-block
+    overflow hidden
+
+    text-overflow ellipsis
+    vertical-align top
+
+  .icon
+    position relative
+
+  &.{$ctx}_type_link
+    text-decoration none
+
+  &:hover,
+  &.{$ctx}_hovered
+    cursor pointer
+
+    background rgba(0, 0, 0, 0.3)
+
+  &.{$ctx}_focused-hard
+    z-index 1
+
+    background rgba(178, 142, 0, 0.6)
+    box-shadow 0 0 0 1px #5e81a8
+
+  &.{$ctx}_pressed:before
+    background #f6f5f3
+
+  &.{$ctx}_view_plain
+    background none
+
+    &:before
+      display none
+
+    &.{$ctx}_pressed
+      background #f6f5f3
+
+    &.{$ctx}_checked
+      background #ffeba0
+
+      &.{$ctx}_pressed
+        background #fee481
+
+    &.{$ctx}_disabled
+      background none
+
+  &.{$ctx}_view_action
+    color #fff
+    background #5e81a8
+    transform translate(0px, 0px)
+
+    &:active
+    &.{$ctx}_pressed
+      background #5779a1
+      transform translate(0px, 1px)
+
+    &:hover,
+    &.{$ctx}_hovered
+      background #6888ad
+
+  &.{$ctx}_view_pseudo
+    overflow hidden
+
+    background none
+
+    &:before
+      background none
+      box-shadow 0 0 0 1px rgba(0, 0, 0, 0.2)
+
+    &.{$ctx}_hovered:before
+      box-shadow 0 0 0 1px rgba(0, 0, 0, 0.3)
+
+    &.{$ctx}_focused-hard:before
+      box-shadow none
+
+    &.{$ctx}_pressed:before
+      background rgba(0, 0, 0, 0.05)
+
+    &.{$ctx}_checked
+      &:before
+        background #ffeba0
+        box-shadow 0 0 0 1px rgba(153, 122, 0, 0.5)
+
+      &.{$ctx}_hovered:before
+        box-shadow 0 0 0 1px rgba(129, 103, 0, 0.6)
+
+      &.{$ctx}_pressed:before
+        background #fee481
+        box-shadow 0 0 0 1px rgba(129, 103, 0, 0.6)
+
+
+  &.{$ctx}_disabled
+    background rgba(0, 0, 0, 0.08)
+
+    &:before
+      display none
+
+    &.{$ctx}_checked:before
+      display block
+      background #ffeba0
+
+    .{$ctx}__text
+      color #aaa
+
+    .icon
+      opacity 0.3
+
+  &.{$ctx}_size_s
+    font-size 13px
+    line-height 24px
+    height 24px
+
+    .icon
+      margin 2px
+
+    .{$ctx}__text
+      margin 0 15px
+
+  &.{$ctx}_size_m
+    font-size 13px
+    line-height 28px
+    height 28px
+
+    .icon
+      margin 2px
+
+    .{$ctx}__text
+      margin 0 20px
+
+  &.{$ctx}_size_l
+    font-size 13px
+    line-height 32px
+    height 32px
+
+    .icon
+      margin 2px
+
+    .{$ctx}__text
+      margin 0 25px
+
+  &.{$ctx}_size_xl
+    font-size 18px
+    line-height 38px
+
+    .icon
+      margin 2px
+
+    .{$ctx}__text
+      margin 0 30px
+
+  & .icon + .{$ctx}__text
+    margin-left 0
+
+  .{$ctx}__text:not(:last-child)
+    margin-right 0
+

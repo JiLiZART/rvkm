@@ -1,0 +1,43 @@
+$ctx = icon
+$icons = exit person group headset menu add clear close equalizer fast_forward fast_rewind favorite favorite_border file_download loop pause play_arrow playlist_play repeat shuffle volume_down volume_mute volume_off volume_up
+
+.{$ctx}
+  display inline-block
+  vertical-align top
+  background center center no-repeat
+  background-size 100%
+
+  &.{$ctx}_style_light
+    opacity 0.4
+
+  &.{$ctx}_size_xs
+    width 16px
+    height 16px
+    background-size 14px 14px
+
+  &.{$ctx}_size_s
+    width 20px
+    height 20px
+    background-size 18px 18px
+
+  &.{$ctx}_size_m
+    width 24px
+    height 24px
+    background-size 22px 22px
+
+  &.{$ctx}_size_l
+    height 28px
+    width 28px
+    background-size 26px 26px
+
+  &.{$ctx}_size_xl
+    height 34px
+    width 34px
+    background-size 32px 32px
+
+  for $name in $icons
+    &.{$ctx}_name_{$name}
+      background-image url(s('ic_%s_black_36px.svg', $name))
+
+    &.{$ctx}_name_{$name}.{$ctx}_style_white
+      background-image s('svg-load("ic_%s_black_36px.svg", fill=#fff)', $name);

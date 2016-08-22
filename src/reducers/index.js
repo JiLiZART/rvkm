@@ -1,9 +1,9 @@
-import session from './session.js';
+import user from './user.js';
 import player from './player.js';
 import albums from './albums.js';
 import groups from './groups.js';
 import friends from './friends.js';
-import playlist from './playlist.js';
-import { routerStateReducer as router } from 'redux-router';
+import audios from './audios.js';
+import menu from './menu.js';
 
-export { session, player, albums, groups, friends, playlist, router };
+export { user, player, albums, groups, friends, audios, menu };

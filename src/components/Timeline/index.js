@@ -1,0 +1,79 @@
+import React, {Component} from 'react';
+import block from 'bem-cn';
+import './index.styl';
+
+import AudioPlayer from 'models/AudioPlayer';
+import throttle from 'lodash/throttle';
+
+import {connect} from 'react-redux';
+import {seek} from 'actions/player';
+
+const mapStateToProps = (state) => {
+  return {
+    player: state.player
+  };
+};
+
+const timeline = block('timeline');
+
+class Timeline extends Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this.state = {
+      seek: 0,
+      buffer: 0,
+      progress: 0
+    };
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.updateTrail);
+
+    AudioPlayer.on('progress', () => this.setState(AudioPlayer.getInfo()));
+    AudioPlayer.on('timeupdate', () => this.setState(AudioPlayer.getInfo()));
+  }
+
+  componentDidUpdate() {
+    throttle(this.updateTrail, 1000);
+  }
+
+  updateTrail = () => this.setState({width: this._trail.clientWidth});
+
+  calculateSeek(e) {
+    return (e.clientX / this.state.width) * 100;
+  }
+
+  handleTrailMove = (e) => this.setState({seek: this.calculateSeek(e)});
+  handleTrailLeave = () => this.setState({seek: 0});
+  handleTrailClick = (e) => {
+    const seek = this.props.seek;
+    const duration = this.props.player.audio.duration;
+    const percent = this.calculateSeek(e);
+    const value = (duration * percent) / 100;
+
+    seek(value);
+  };
+
+  render() {
+    const {seek, buffer, progress} = this.state;
+
+    return (
+      <div className={timeline({seek: Boolean(seek)})}
+           onMouseMove={this.handleTrailMove}
+           onMouseLeave={this.handleTrailLeave}
+           onClick={this.handleTrailClick} >
+        <div className={timeline('trail')} ref={(el) => this._trail = el}>
+          <div className={timeline('buffer')} style={{width: buffer + '%'}}></div>
+          <div className={timeline('seek')} style={{width: seek + '%'}}></div>
+          <div className={timeline('progress')} style={{width: progress + '%'}}></div>
+        </div>
+      </div>
+    );
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  {seek}
+)(Timeline);

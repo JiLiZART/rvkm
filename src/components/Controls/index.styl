@@ -1,0 +1,90 @@
+$ctx = controls
+$rowHeight = 42px
+
+.{$ctx}
+  position absolute
+  top 0
+  padding 0 15px
+
+  display flex
+  flex-direction row
+  align-items center
+  flex-wrap nowrap
+
+  width 100%
+  height 100%
+  box-sizing border-box
+
+  +mobile()
+    padding 0 5px
+    flex-direction column
+
+  .{$ctx}__btn
+    margin 0 5px
+    opacity .4
+    display inline-block
+    vertical-align top
+    cursor pointer
+    -webkit-user-select none
+    user-select none
+
+  .{$ctx}__playback
+    margin-right 30px
+    display flex
+    flex-direction row
+    align-items center
+    order 1
+
+    +mobile()
+      width 100%
+      margin-right 0
+      order 2
+      height $rowHeight
+
+  .{$ctx}__track-container
+    display flex
+    align-items center
+    order 2
+    +mobile()
+      width 100%
+      order 3
+      height $rowHeight
+
+  .{$ctx}__volume
+    margin-left auto
+    display flex
+    flex-direction row
+    align-items center
+    order 3
+
+    +mobile()
+      width 100%
+      order 1
+      height $rowHeight
+
+  .{$ctx}__track-controls
+    margin 2px
+    display inline-flex
+    vertical-align top
+    flex-direction row
+    align-items center
+
+  .{$ctx}__track
+    display inline-block
+    vertical-align top
+    margin-right 30px
+
+    +mobile()
+      margin-right 0
+      width 100%
+      display block
+
+  .{$ctx}__volume-slider
+    width 100%
+
+    input
+      width 100%
+      color #4C6B8F
+
+    +desktop()
+      min-width 300px

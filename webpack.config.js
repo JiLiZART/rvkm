@@ -1,6 +1,4 @@
 import webpack from 'webpack';
-import cssnext from 'cssnext';
-import precss from 'precss';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 const assetPath = require('path').join(__dirname, 'dist');
@@ -13,7 +11,7 @@ const resolve = {
       'components': __dirname + '/src/components/',
       'reducers': __dirname + '/src/reducers/',
       'actions': __dirname + '/src/actions/',
-      'services': __dirname + '/src/services',
+      'models': __dirname + '/src/models',
       'middlewares': __dirname + '/src/middlewares/',
       'pages': __dirname + '/src/pages/',
       'react': __dirname + '/node_modules/react',
@@ -37,21 +35,27 @@ const jsLoaders = {
   loader: 'babel'
 };
 
-const loaders = [{
-  test: /\.scss/,
-  exclude: [/node_module/],
-  loader: 'style!css?module&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss'
-}, {
-  test: /\.styl$/,
-  loader: 'style!css?module&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss!stylus'
-}, {
-  test: /\.css/,
-  exclude: [/node_module/],
-  loader: 'style!css'
-}, {
-  test: /\.(png|jpg|woff|woff2)$/,
-  loader: 'url?limit=8192'
-}];
+const loaders = [
+  {
+    test: /\.styl$/,
+    loaders: [
+      'style',
+      //'css?importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
+      'css',
+      'postcss',
+      'stylus'
+    ]
+  },
+  {
+    test: /\.css/,
+    //exclude: [/node_module/],
+    loader: 'style!css'
+  },
+  {
+    test: /\.(png|jpg|woff|woff2|svg)$/,
+    loader: 'url?limit=8192'
+  }
+];
 
 const plugins = {
   development: [
@@ -77,7 +81,10 @@ const plugins = {
     }),
     new webpack.DefinePlugin({
       __DEVELOPMENT__: false,
-      __DEVTOOLS__: false
+      __DEVTOOLS__: false,
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production')
+      }
     }),
     new HtmlWebpackPlugin({
       template: 'src/index.html.tpl',
@@ -107,22 +114,7 @@ const development = {
   module: {
     ...lintLoaders,
     loaders: [{
-      ...jsLoaders,
-      query: {
-        plugins: ['react-transform'],
-        extra: {
-          'react-transform': {
-            transforms: [{
-              transform: 'react-transform-hmr',
-              imports: ['react'],
-              locals: ['module']
-            }, {
-              transform: 'react-transform-catch-errors',
-              imports: ['react', 'redbox-react']
-            }]
-          }
-        }
-      }
+      ...jsLoaders
     },
       ...loaders
     ]
@@ -130,12 +122,21 @@ const development = {
 
   plugins: plugins.development,
 
+  stylus: {
+    use: [
+      require('rupture')()
+    ]
+  },
+
   postcss: function () {
     return [
-      cssnext({
-        autoprefixer: ['last 2 version']
+      require('cssnext')({
+        autoprefixer: ['last 4 version']
       }),
-      precss
+      require('precss'),
+      require('postcss-write-svg'),
+      require('postcss-inline-svg')
+      //require('postcss-svgo')()
     ]
   }
 };
@@ -162,14 +163,23 @@ const production = {
 
   plugins: plugins.production,
 
+  stylus: {
+    use: [
+      require('rupture')()
+    ]
+  },
+
   postcss: function () {
     return [
-      cssnext({
-        autoprefixer: ['last 2 version']
+      require('cssnext')({
+        autoprefixer: ['last 4 version']
       }),
-      precss
+      require('precss'),
+      require('postcss-write-svg'),
+      require('postcss-inline-svg')
+      //require('postcss-svgo')()
     ]
   }
 };
 
-export { development, production }
+export {development, production}

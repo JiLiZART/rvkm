@@ -1,23 +1,17 @@
 import { createAction } from 'redux-actions';
-import { User } from 'services';
+import Audio from 'models/Audio';
+import {show} from './menu';
 
-export const start = createAction('ALBUMS_START');
+export const start = createAction('ALBUMS_FETCHING');
 export const error = createAction('ALBUMS_ERROR');
-export const success = createAction('ALBUMS_SUCCESS', (items = {}) => items);
-
-const playlist = require('./playlist');
-
-export function load(album) {
-  return (dispatch) => {
-    dispatch(playlist.start());
-    dispatch(playlist.load(album));
-  };
-}
+export const load = createAction('ALBUMS', (r) => r);
 
 export function fetch(userID) {
   return (dispatch) => {
     dispatch(start());
-
-    User.getAlbums(userID).then((items) => dispatch(success(items)), () => dispatch(error()));
+    return Audio.getAlbums(userID, 0, 100).then((r) => {
+      dispatch(load(r));
+      dispatch(show());
+    }, () => dispatch(error()));
   };
 }
