@@ -1,5 +1,5 @@
 $ctx = controls
-$rowHeight = 42px
+$rowHeight = 44px
 
 .{$ctx}
   position absolute
@@ -21,7 +21,6 @@ $rowHeight = 42px
 
   .{$ctx}__btn
     margin 0 5px
-    opacity .4
     display inline-block
     vertical-align top
     cursor pointer
@@ -42,10 +41,13 @@ $rowHeight = 42px
       height $rowHeight
 
   .{$ctx}__track-container
+    margin-right 30px
     display flex
     align-items center
     order 2
+
     +mobile()
+      margin-right 0
       width 100%
       order 3
       height $rowHeight
@@ -72,10 +74,8 @@ $rowHeight = 42px
   .{$ctx}__track
     display inline-block
     vertical-align top
-    margin-right 30px
 
     +mobile()
-      margin-right 0
       width 100%
       display block
 

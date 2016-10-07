@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import block from 'bem-cn';
+import cn from 'bem-cn';
 import './index.styl';
 
 import InputRange from 'components/InputRange';
@@ -7,21 +7,18 @@ import Track from 'components/Track';
 import Icon from 'components/Icon';
 import Button from 'components/Button';
 import Popup from 'components/Popup';
+import PlayButton from 'components/PlayButton';
 import Playlist from 'components/Playlist';
 
 import Audio from 'models/Audio';
 import AudioPlayer from 'models/AudioPlayer';
 
 import {connect} from 'react-redux';
-import {play, pause, next, prev, volume, mute, max, shuffle, loop, end} from 'actions/player';
+import {play, pause, next, prev, volume, mute, max, shuffleToggle, loopToggle, end, playlistToggle} from 'actions/player';
 
-const mapStateToProps = (state) => {
-  return {
-    player: state.player
-  };
-};
+const mapStateToProps = (state) => ({player: state.player});
 
-const controls = block('controls');
+const block = cn('controls');
 
 class Controls extends Component {
   constructor(props, context) {
@@ -51,9 +48,7 @@ class Controls extends Component {
   onSeqClick = () => {
     const {inPlaylist} = this.state;
 
-    this.setState({
-      inPlaylist: !inPlaylist
-    });
+    playlistToggle();
   };
 
   onPlayClick = () => {
@@ -123,48 +118,48 @@ class Controls extends Component {
   };
 
   onShuffleClick = () => {
-    const {shuffle} = this.props;
+    const {shuffleToggle} = this.props;
 
-    shuffle();
+    shuffleToggle();
   };
 
   onLoopClick = () => {
-    const {loop} = this.props;
+    const {loopToggle} = this.props;
 
-    loop();
+    loopToggle();
   };
 
   render() {
-    const {inPlaylist, time, volume} = this.state;
+    const {time, volume} = this.state;
     const {player} = this.props;
     const audio = Audio.hydrate(player.audio);
     const isPlaying = player.playing;
+    const inPlaylist = player.inPlaylist;
 
     if (!player.audio) {
-      return (<div className={controls}></div>)
+      return (<div className={block}></div>)
     }
 
     return (
-      <div className={controls}>
-        <div className={controls('playback')}>
-          <Button className={controls('btn', {prev: true})} onClick={this.onPrevClick} size="m" view="plain" icon={<Icon name="fast_rewind" size="m" />}/>
-          <Button className={controls('btn', {play: true})} onClick={this.onPlayClick} size="l" view="plain" icon={<Icon name={isPlaying ? 'pause' : 'play_arrow'} size="l" />}/>
-          <Button className={controls('btn', {next: true})} onClick={this.onNextClick} size="m" view="plain" icon={<Icon name="fast_forward" size="m" />}/>
-          <Button className={controls('btn', {seq: true})} onClick={this.onSeqClick} size="m" view="plain" icon={<Icon name="playlist_play" size="m" />}/>
-
+      <div className={block}>
+        <div className={block('playback')}>
+          <Button className={block('btn', {prev: true})} onClick={this.onPrevClick} size="m" view="plain" icon={<Icon name="fast_rewind" size="m" style="blue" />}/>
+          <PlayButton className={block('btn', {play: true})} onClick={this.onPlayClick} size="m" playing={isPlaying} />
+          <Button className={block('btn', {next: true})} onClick={this.onNextClick} size="m" view="plain" icon={<Icon name="fast_forward" size="m" style="blue" />}/>
+          <Button className={block('btn', {seq: true})} onClick={this.onSeqClick} size="m" view="plain" icon={<Icon name="playlist_play" light={!inPlaylist} size="m" style="blue" />}/>
           <Popup visible={inPlaylist} title={player.playlist.title}>
             <Playlist playlist={player.playlist}/>
           </Popup>
         </div>
-        <div className={controls('track-container')}>
-          <Track className={controls('track')} size="m" id={audio.getId()} url={audio.getUrl()} duration={time} artist={audio.getArtist()} song={audio.getSong()} />
+        <div className={block('track-container')}>
+          <Track className={block('track')} size="m" id={audio.getId()} url={audio.getUrl()} duration={time} artist={audio.getArtist()} song={audio.getSong()} />
         </div>
-        <div className={controls('volume')}>
-          <Button className={controls('btn', {loop: true})} onClick={this.onLoopClick} size="m" view="plain" icon={<Icon name="repeat" style={player.loop ? '':'light'} size="m" />}/>
-          <Button className={controls('btn', {shuffle: true})} onClick={this.onShuffleClick} size="m" view="plain" icon={<Icon name="shuffle" style={player.shuffle ? '':'light'} size="m" />}/>
-          <Button className={controls('btn', {mute: true})} onClick={this.onMuteClick} size="m" view="plain" icon={<Icon name="volume_mute" size="m" />}/>
-          <div className={controls('volume-slider')}><InputRange value={volume} maxValue={100} minValue={0} onChange={this.onVolumeChange}/></div>
-          <Button className={controls('btn', {max: true})} onClick={this.onMaxClick} size="l" view="plain" icon={<Icon name="volume_up" size="l" />}/>
+        <div className={block('volume')}>
+          <Button className={block('btn', {loop: true})} onClick={this.onLoopClick} size="m" view="plain" icon={<Icon name="repeat" light={!player.loop} size="m" style="blue" />}/>
+          <Button className={block('btn', {shuffle: true})} onClick={this.onShuffleClick} size="m" view="plain" icon={<Icon name="shuffle" light={!player.shuffle} size="m" style="blue" />}/>
+          <Button className={block('btn', {mute: true})} onClick={this.onMuteClick} size="m" view="plain" icon={<Icon name="volume_mute" size="m" style="blue" />}/>
+          <div className={block('volume-slider')}><InputRange value={volume} type='range' max={100} min={0} onChange={this.onVolumeChange}/></div>
+          <Button className={block('btn', {max: true})} onClick={this.onMaxClick} size="l" view="plain" icon={<Icon name="volume_up" size="l" style="blue" />}/>
         </div>
       </div>
     );
@@ -173,5 +168,5 @@ class Controls extends Component {
 
 export default connect(
   mapStateToProps,
-  {play, pause, next, prev, volume, mute, max, shuffle, loop}
+  {play, pause, next, prev, volume, mute, max, shuffleToggle, loopToggle, playlistToggle}
 )(Controls);

@@ -10,45 +10,63 @@ import User from 'models/User';
 import {connect} from 'react-redux';
 import {add, remove} from 'actions/audios';
 
-const track = block('track');
+const b = block('track');
 
-const mapStateToProps = (state) => {
-  return {
-    player: state.player,
-    user: new User(state.user)
-  };
-};
+const mapStateToProps = (state) => ({
+  player: state.player,
+  user: new User(state.user)
+});
 
 class Track extends Component {
-
-  onDownloadClick = () => window.open(this.props.url);
 
   onRemoveClick = (audioID) => this.props.remove(audioID, this.user.getId());
 
   onAddClick = (audioID) => this.props.add(audioID, this.user.getId());
 
   render() {
-    const {className, size, artist, song, duration, id, url} = this.props;
+    const {className, size, artist, song, duration, id, url, canBeAdded, canBeRemoved} = this.props;
+    const buttons = [];
+
+    if (canBeAdded) {
+      buttons.push(
+        <Button
+          className={b('btn', {add: true})}
+          onClick={() => this.onAddClick(id)}
+          size="s"
+          view="plain"
+          icon={<Icon name="add" size="s" light={true} style="blue"/>}
+        />
+      )
+    }
+
+    if (canBeRemoved) {
+      buttons.push(
+        <Button
+          className={b('btn', {add: true})}
+          onClick={() => this.onRemoveClick(id)}
+          size="s"
+          view="plain"
+          icon={<Icon name="clear" size="s" light={true} style="blue"/>}
+        />
+      )
+    }
 
     return (
-      <div className={track({size}).mix(className)}>
-      <span className={track('content')}>
-        <span className={track('left')}>
-          <span className={track('artist')}>{artist}</span><span className={track('divider')}>&nbsp;&mdash;&nbsp;</span><span className={track('song')}>{song}</span>
-        </span>
-        <span className={track('right')}>
-          <span className={track('duration')}>{duration}</span>
-          <span className={track('controls')}>
-            <Button className={track('btn', {remove: true})}
-              onClick={() => this.onRemoveClick(id)} size="s" view="plain" icon={<Icon name="clear" size="s" style="light" />}/>
-            <Button className={track('btn', {add: true})}
-              onClick={() => this.onAddClick(id)} size="s" view="plain" icon={<Icon name="add" size="s" style="light" />}/>
+      <div className={b({size}).mix(className)}>
+        <span className={b('content')}>
+          <span className={b('left')}>
+            <span className={b('artist')}>{artist}</span><span className={b('divider')}>&nbsp;&mdash;&nbsp;</span><span className={b('song')}>{song}</span>
+          </span>
+          <span className={b('right')}>
+            <span className={b('duration')}>{duration}</span>
+            <span className={b('controls')}>
+              {buttons}
               <a href={url} download={`${artist} - ${song}.mp3`}>
-                <Button className={track('btn', {download: true})} size="s" view="plain" icon={<Icon name="file_download" size="s" style="light" />}/>
+                <Button className={b('btn', {download: true})} size="s" view="plain" icon={<Icon name="file_download" size="s" light={true} style="blue" />}/>
               </a>
+            </span>
           </span>
         </span>
-      </span>
       </div>
     );
   }

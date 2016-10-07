@@ -7,7 +7,7 @@ $icons = exit person group headset menu add clear close equalizer fast_forward f
   background center center no-repeat
   background-size 100%
 
-  &.{$ctx}_style_light
+  &.{$ctx}_light
     opacity 0.4
 
   &.{$ctx}_size_xs
@@ -41,3 +41,6 @@ $icons = exit person group headset menu add clear close equalizer fast_forward f
 
     &.{$ctx}_name_{$name}.{$ctx}_style_white
       background-image s('svg-load("ic_%s_black_36px.svg", fill=#fff)', $name);
+
+    &.{$ctx}_name_{$name}.{$ctx}_style_blue
+      background-image s('svg-load("ic_%s_black_36px.svg", fill=#577ca1)', $name);

@@ -19,8 +19,17 @@ const mapStateToProps = (state) => {
 };
 
 const app = block('app');
+const COUNT = 100;
 
 class Albums extends Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this.state = {
+      audiosOffset: 0
+    }
+  }
+
   componentDidMount() {
     this.fetchAlbums().then(() => this.fetchAudios());
   }
@@ -37,13 +46,14 @@ class Albums extends Component {
     return fetchAlbums(user.getId())
   }
 
-  fetchAudios() {
+  fetchAudios(offset = 0, count = COUNT) {
     const {
       params,
       user,
       albums,
       fetchRecomended,
       fetchWall,
+      fetchAll,
       fetchPopular,
       fetchAlbum,
       router
@@ -57,37 +67,43 @@ class Albums extends Component {
       router.push('/albums/recomended');
     }
 
+    this.setState({audiosOffset: offset});
+
     switch (params.id) {
       case 'recomended':
-        return fetchRecomended(user.getId());
+        return fetchRecomended(user.getId(), offset, count);
       case 'wall':
-        return fetchWall(user.getId());
+        return fetchWall(user.getId(), offset, count);
       case 'popular':
-        return fetchPopular(user.getId());
+        return fetchPopular(user.getId(), offset, count);
+      case 'all':
+        return fetchAll(user.getId(), offset, count);
       default:
-        return fetchAlbum(user.getId(), id, getTitle());
+        return fetchAlbum(user.getId(), id, getTitle(), offset, count);
     }
   }
 
-  mapAlbum = (album) => {
-    const {params} = this.props;
-    const id = params.id;
-
-    return {
-      id: album.getId(),
-      url: `/albums/${album.getId()}`,
-      name: album.getName(),
-      active: album.getId() == id
-    }
-  };
+  mapAlbum = (album) => ({
+    id: album.getId(),
+    url: `/albums/${album.getId()}`,
+    name: album.getName(),
+    active: album.getId() == this.props.params.id
+  });
 
   static getDefaultItems() {
     return Album.hydrateArray([
+      {id: 'all', title: 'All'},
       {id: 'recomended', title: 'Recomended'},
       {id: 'wall', title: 'Wall'},
       {id: 'popular', title: 'Popular'}
     ]);
   }
+
+  onMoreClick = (done) => {
+    const {audiosOffset} = this.state;
+
+    this.fetchAudios(audiosOffset + COUNT).then(() => done());
+  };
 
   render() {
     const {albums, audios} = this.props;
@@ -99,7 +115,9 @@ class Albums extends Component {
         <div className={app('nav')}>
           <Menu items={[...defaultItems, ...items].map(this.mapAlbum)}/>
         </div>
-        <div className={app('content')}><Playlist playlist={audios}/></div>
+        <div className={app('content')}>
+          <Playlist playlist={audios} onMore={this.onMoreClick}/>
+        </div>
       </section>
     );
   }

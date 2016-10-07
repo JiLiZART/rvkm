@@ -10,19 +10,62 @@ class AudioPlayer {
   HAVE_ENOUGH_DATA = 4;
 
   constructor() {
+    this.context = new AudioContext();
     this.audio = new window.Audio();
+    //this.source = this.context.createMediaElementSource(this.audio);
+    //this.analyser = this.createAnalyzer();
+  }
+
+  createAnalyzer() {
+    this.analyser = this.context.createAnalyser();
+
+    this.analyser.smoothingTimeConstant = 0.3;
+    this.analyser.fftSize = 32;
+
+    const bands = new Uint8Array(this.analyser.frequencyBinCount);
+    const analyserNode = this.context.createScriptProcessor(256, 1, 1);
+
+    this.analyser.connect(analyserNode);
+
+    analyserNode.onaudioprocess = () => {
+      this.analyser.getByteFrequencyData(bands);
+    };
+
+    // window.setInterval(() => {
+    //   this.updateVisualization(bands);
+    // }, 100);
+
+    analyserNode.connect(this.context.destination);
+
+    return analyserNode;
   }
 
   on(event, handler) {
     this.audio.addEventListener(event, handler);
+    return this;
   }
 
   off(event, handler) {
     this.audio.removeEventListener(event, handler);
+    return this;
   }
 
   loadFromUrl(url) {
     this.audio.src = url;
+
+    return new Promise((resolve, reject) => {
+      const handler = this.loadHandler(resolve);
+
+      this
+        .off('canplay', handler)
+        .on('canplay', handler)
+    });
+  }
+
+  loadHandler(done) {
+    return () => {
+      done();
+    };
   }
 
   play() {

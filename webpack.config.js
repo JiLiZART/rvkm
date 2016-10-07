@@ -13,9 +13,7 @@ const resolve = {
       'actions': __dirname + '/src/actions/',
       'models': __dirname + '/src/models',
       'middlewares': __dirname + '/src/middlewares/',
-      'pages': __dirname + '/src/pages/',
-      'react': __dirname + '/node_modules/react',
-      'react/addons': __dirname + '/node_modules/react/addons'
+      'pages': __dirname + '/src/pages/'
     }
   }
 };

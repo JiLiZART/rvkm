@@ -4,7 +4,7 @@ const defaultState = {fetching: false, error: false, items: null, count: 0, id: 
 
 export default handleActions({
   AUDIOS_FETCHING: (state) => {
-    return Object.assign({}, state, {fetching: true, error: false});
+    return Object.assign({}, state, {fetching: state.items === null, error: false});
   },
   AUDIOS: (state, action) => {
     return Object.assign({}, state, action.payload, {fetching: false, error: false});

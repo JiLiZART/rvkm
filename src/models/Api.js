@@ -17,40 +17,40 @@ class Api {
   };
 
   static getLoginStatus(force) {
-    return new Promise((fulfill, reject) => {
+    return new Promise((resolve, reject) => {
       VK.Auth.getLoginStatus((r) => {
         console.log('auth.loginStatus', r);
         if (r.error) reject(r.error);
-        fulfill(r.session);
+        resolve(r.session);
       }, force);
     });
   }
 
   static login(settings) {
-    return new Promise((fulfill, reject) => {
+    return new Promise((resolve, reject) => {
       VK.Auth.login((r) => {
         console.log('auth.login', r);
         if (r.error) reject(r.error);
-        fulfill(r.session);
+        resolve(r.session);
       }, settings);
     });
   }
 
   static logout() {
-    return new Promise((fulfill, reject) => {
+    return new Promise((resolve, reject) => {
       VK.Auth.logout((r) => {
         if (r.error) reject(r.error);
-        fulfill();
+        resolve();
       });
     });
   }
 
   static call(method, params, queryTry) {
-    return new Promise((fulfill, reject) => {
+    return new Promise((resolve, reject) => {
       VK.Api.call(method, Object.assign({v: Api.VERSION}, params, queryTry), (r) => {
         console.log(method, params, r);
         if (r.error) reject(r.error);
-        fulfill(r.response);
+        resolve(r.response);
       });
     });
   }

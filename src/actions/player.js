@@ -1,5 +1,6 @@
 import {createAction} from 'redux-actions';
 import AudioPlayer from 'models/AudioPlayer';
+import Audio from 'models/Audio';
 
 export const playlist = createAction('PLAYER_PLAYLIST', (item) => item);
 
@@ -15,8 +16,9 @@ export const nextSuccess = createAction('PLAYER_NEXT', (player) => player);
 export const prevSuccess = createAction('PLAYER_PREV', (player) => player);
 export const progress = createAction('PLAYER_PROGRESS', (value) => value);
 export const volumeSuccess = createAction('PLAYER_VOLUME', (value) => value);
-export const shuffle = createAction('PLAYER_SHUFFLE', (value) => value);
-export const loop = createAction('PLAYER_LOOP', (value) => value);
+export const shuffleToggle = createAction('PLAYER_SHUFFLE', (value) => value);
+export const loopToggle = createAction('PLAYER_LOOP', (value) => value);
+export const playlistToggle = createAction('PLAYER_IN_PLAYLIST', (value) => value);
 export const end = createAction('PLAYER_END');
 
 export function init() {
@@ -29,8 +31,15 @@ export function init() {
 
 export function load(audio) {
   return (dispatch) => {
-    AudioPlayer.loadFromUrl(audio.url);
-    dispatch(loadSuccess(audio))
+    Audio.getById(audio.id, audio.owner_id).then((items) => {
+      if (Array.isArray(items) && items.length) {
+        const item = items[0];
+
+        AudioPlayer.loadFromUrl(item.url).then(() => {
+          dispatch(loadSuccess(item));
+        });
+      }
+    });
   };
 }
 

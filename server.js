@@ -1,36 +1,24 @@
 require('babel-register');
 
-var path = require('path');
-var express = require('express');
-var webpack = require('webpack');
-var config = require('./webpack.config').development;
+const express = require('express');
+const webpack = require('webpack');
+const {development} = require('./webpack.config');
 
-var app = express();
-var compiler = webpack(config);
-var PORT = 2000;
+const app = express();
+const compiler = webpack(development);
+const PORT = 2000;
 
 app.use(require('webpack-dev-middleware')(compiler, {
   noInfo: false,
-  publicPath: config.output.publicPath,
-  stats: {
-    colors: true
-  }
+  publicPath: development.output.publicPath,
+  stats: {colors: true}
 }));
 
 app.use(require('webpack-hot-middleware')(compiler));
 
-// This is fired every time the server side receives a request
-app.use(handleRender);
-
-// We are going to fill these out in the sections to follow
-function handleRender(req, res) { /* ... */ }
-function renderFullPage(html, initialState) { /* ... */ }
-
 app.listen(PORT, function (err) {
-  if (err) {
-    console.log(err);
-    return;
-  }
+  if (err) throw err;
+  var addr = this.address();
 
-  console.log('Listening at http://localhost:3000');
+  console.log(`Listening at ${addr.family} ${addr.address}:${addr.port}`);
 });

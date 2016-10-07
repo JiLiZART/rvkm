@@ -115,6 +115,10 @@ export default class Audio {
     return Api.call('audio.get', params);
   }
 
+  static getById(audioID, userID) {
+    return Api.call('audio.getById', {audios: `${userID}_${audioID}`})
+  }
+
   static add(audioID, userID, albumID) {
     const params = {audio_id: audioID, owner_id: userID};
 
@@ -158,6 +162,10 @@ export default class Audio {
     return Wall.get(userID).then((r) => {
       return r.items.map(mapPost).reduce((prev, next) => prev.concat(next), [])
     })
+  }
+
+  static getAll(userID, offset = 0, count = 100) {
+    return Api.call('audio.get', {owner_id: userID, offset, count});
   }
 
   static getPopular(userID, offset = 0, count = 100) {

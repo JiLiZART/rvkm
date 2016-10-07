@@ -34,8 +34,8 @@ class Timeline extends Component {
     AudioPlayer.on('timeupdate', () => this.setState(AudioPlayer.getInfo()));
   }
 
-  componentDidUpdate() {
-    throttle(this.updateTrail, 1000);
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateTrail);
   }
 
   updateTrail = () => this.setState({width: this._trail.clientWidth});
@@ -44,6 +44,7 @@ class Timeline extends Component {
     return (e.clientX / this.state.width) * 100;
   }
 
+  handleTrailEnter = () => this.updateTrail();
   handleTrailMove = (e) => this.setState({seek: this.calculateSeek(e)});
   handleTrailLeave = () => this.setState({seek: 0});
   handleTrailClick = (e) => {
@@ -60,10 +61,12 @@ class Timeline extends Component {
 
     return (
       <div className={timeline({seek: Boolean(seek)})}
+           onMouseEnter={this.handleTrailEnter}
            onMouseMove={this.handleTrailMove}
            onMouseLeave={this.handleTrailLeave}
-           onClick={this.handleTrailClick} >
-        <div className={timeline('trail')} ref={(el) => this._trail = el}>
+           onClick={this.handleTrailClick}
+           ref={(el) => this._trail = el} >
+        <div className={timeline('trail')}>
           <div className={timeline('buffer')} style={{width: buffer + '%'}}></div>
           <div className={timeline('seek')} style={{width: seek + '%'}}></div>
           <div className={timeline('progress')} style={{width: progress + '%'}}></div>

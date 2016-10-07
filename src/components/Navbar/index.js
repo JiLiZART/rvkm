@@ -28,7 +28,7 @@ const Navbar = ({toggle, logout, menu, user}) => (
       <div className={navbar('item')}>
         <Link activeClassName={String(navbar('link', {active:true}))} className={navbar('link')} to="/albums/">
           <span className={navbar('icon')}><Icon name="headset" style="white" size="m" /></span>
-          <span className={navbar('text')}>Мое</span>
+          <span className={navbar('text')}>My</span>
         </Link>
       </div>
       <div className={navbar('item')}>

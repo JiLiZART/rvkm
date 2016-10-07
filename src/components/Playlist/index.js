@@ -3,9 +3,10 @@ import block from 'bem-cn';
 import './index.styl';
 
 import Track from 'components/Track';
-import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
 import Error from 'components/Error';
+import PaginationMore from 'components/PaginationMore';
+import PlayButton from 'components/PlayButton';
 
 import User from 'models/User';
 import Audio from 'models/Audio';
@@ -13,12 +14,10 @@ import Audio from 'models/Audio';
 import {connect} from 'react-redux';
 import {load, play, pause, playlist as loadPlaylist} from 'actions/player';
 
-const mapStateToProps = (state) => {
-  return {
-    user: new User(state.user),
-    player: state.player
-  };
-};
+const mapStateToProps = (state) => ({
+  user: new User(state.user),
+  player: state.player
+});
 
 const b = block('playlist');
 
@@ -31,9 +30,9 @@ class Playlist extends Component {
     const duration = audio.getDuration();
 
     return (
-      <div className={b('item', {current: isCurrent})} key={i} onClick={() => this.onTrackClick(audio)}>
+      <div className={b('item', {current: isCurrent})} key={i}>
         <div className={b('controls')}>
-          <div className={b('play')}><Icon name={isCurrent && isPlaying ? 'pause' : 'play_arrow'} style="white" size="xs"/></div>
+          <PlayButton className={b('play')} onClick={() => this.onTrackClick(audio)} playing={isCurrent && isPlaying} size="xs"/>
         </div>
         <Track className={b('track')} size="m" id={audio.getId()} url={audio.getUrl()} duration={duration} artist={audio.getArtist()} song={audio.getSong()}/>
       </div>
@@ -60,12 +59,13 @@ class Playlist extends Component {
   };
 
   render() {
-    const {playlist} = this.props;
+    const {playlist, onMore} = this.props;
+    let pagination = null;
 
     if (!playlist) {
       return (
         <section className={b}>
-          <div className={b('loading')}><Error title="Ничего не выбрано" desc="Выберите элемент из списка слева" /></div>
+          <div className={b('loading')}><Error title="Nothing selected" desc="Please, select some items in list"/></div>
         </section>
       );
     }
@@ -73,7 +73,7 @@ class Playlist extends Component {
     if (playlist.error) {
       return (
         <section className={b}>
-          <div className={b('loading')}><Error title="Произошла Ошибка" desc={playlist.error.error_msg} /></div>
+          <div className={b('loading')}><Error title="An error has occurred" desc={playlist.error.error_msg}/></div>
         </section>
       );
     }
@@ -86,17 +86,24 @@ class Playlist extends Component {
       );
     }
 
-    if (playlist.items && playlist.items.length === 0) {
-      return (
-        <section className={b}>
-          <div className={b('loading')}><Error title="Список пуст" /></div>
-        </section>
-      );
+    if (playlist.items) {
+      if (playlist.items.length === 0) {
+        return (
+          <section className={b}>
+            <div className={b('loading')}><Error title="List is empty"/></div>
+          </section>
+        );
+      }
+
+      if (playlist.items.length !== playlist.count) {
+        pagination = (<PaginationMore onLoad={onMore}/>);
+      }
     }
 
     return (
       <section className={b}>
         {Audio.hydrateArray(playlist.items || []).map(this.rowRender)}
+        {pagination}
       </section>
     );
   }

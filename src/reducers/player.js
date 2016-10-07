@@ -10,6 +10,7 @@ const defaultState = {
   progress: 0,
   buffer: 0,
   playlist: {fetching: false, error: false, items: [], count: 0, id: NaN, title: ''},
+  inPlaylist: false,
   audio: {id: 0}
 };
 
@@ -26,6 +27,9 @@ export default handleActions({
   PLAYER_PLAYLIST: (state, action) => {
     state.playlist = Object.assign({}, state.playlist, action.payload, {fetching: false, error: false});
     return state;
+  },
+  PLAYER_IN_PLAYLIST: (state) => {
+    return Object.assign({}, state, {inPlaylist: !state.inPlaylist});
   },
   PLAYER_LOAD: (state, action) => {
     return Object.assign({}, state, {audio: action.payload, volume: 100});

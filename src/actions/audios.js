@@ -20,15 +20,10 @@ export function remove(audioID, userID) {
   };
 }
 
-export function fetchAll(albumID) {
-  return (dispatch) => {
-  };
-}
-
-export function fetchRecomended(userID) {
+export function fetchRecomended(userID, offset = 0, count = 100) {
   return (dispatch) => {
     dispatch(start());
-    return Audio.getRecommendations(userID, 0, 1000).then((r) => {
+    return Audio.getRecommendations(userID, offset, count).then((r) => {
       const response = {
         id: 'recomended',
         title: 'Recomended',
@@ -43,18 +38,16 @@ export function fetchRecomended(userID) {
   };
 }
 
-export function fetchWall(userID) {
+export function fetchWall(userID, offset = 0, count = 100) {
   return (dispatch) => {
     dispatch(start());
-    return Audio.getWall(userID, 0, 1000).then((items) => {
+    return Audio.getWall(userID, offset, count).then((items) => {
       const response = {
         id: 'wall',
         title: 'Wall',
         items,
         count: items.length
       };
-
-      console.log('fetchWall', items);
 
       dispatch(load(response));
       dispatch(menuHide());
@@ -63,10 +56,10 @@ export function fetchWall(userID) {
   };
 }
 
-export function fetchPopular(userID) {
+export function fetchPopular(userID, offset = 0, count = 100) {
   return (dispatch) => {
     dispatch(start());
-    return Audio.getPopular(userID, 0, 1000).then((items) => {
+    return Audio.getPopular(userID, offset, count).then((items) => {
       const response = {
         id: 'popular',
         title: 'Popular',
@@ -76,15 +69,31 @@ export function fetchPopular(userID) {
 
       dispatch(load(response));
       dispatch(menuHide());
-
     }, (err) => dispatch(error(err)));
   };
 }
 
-export function fetchAlbum(userID, albumID, albumTitle) {
+export function fetchAll(userID, offset = 0, count = 100) {
   return (dispatch) => {
     dispatch(start());
-    return Audio.get(userID, albumID, 0, 1000).then((r) => {
+    return Audio.getAll(userID, offset, count).then((r) => {
+      const response = {
+        id: 'all',
+        title: 'All',
+        items: r.items,
+        count: r.count
+      };
+
+      dispatch(load(response));
+      dispatch(menuHide());
+    }, (err) => dispatch(error(err)))
+  };
+}
+
+export function fetchAlbum(userID, albumID, albumTitle, offset = 0, count = 100) {
+  return (dispatch) => {
+    dispatch(start());
+    return Audio.get(userID, albumID, offset, count).then((r) => {
       const response = {
         id: albumID,
         title: albumTitle,

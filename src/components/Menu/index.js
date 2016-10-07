@@ -2,10 +2,8 @@ import React, {Component} from 'react';
 import block from 'bem-cn';
 import './index.styl';
 
-import Icon from 'components/Icon';
 import Avatar from 'components/Avatar';
 import {Link} from 'react-router';
-import {AutoSizer, VirtualScroll} from 'react-virtualized';
 
 const menu = block('menu');
 
@@ -33,4 +31,5 @@ class Menu extends Component {
     );
   }
 }
+
 export default Menu;
