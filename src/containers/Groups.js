@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 
 import Layout from 'components/Layout';
+import Base from './Base';
 
 import User from 'models/User';
 import Group from 'models/Group';
@@ -16,7 +17,7 @@ const mapStateToProps = (state) => ({
   menu: state.menu
 });
 
-class Groups extends Component {
+class Groups extends Base {
   fetchItems() {
     const {user, fetchGroups} = this.props;
 

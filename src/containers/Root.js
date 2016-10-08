@@ -6,8 +6,6 @@ import Albums from 'containers/Albums';
 import Friends from 'containers/Friends';
 import Groups from 'containers/Groups';
 
-import './index.styl';
-
 const Root = ({store}) => (
   <Provider store={store}>
     <Router history={hashHistory}>
