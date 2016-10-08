@@ -9,7 +9,6 @@ import del from 'del';
 
 const $ = gulpLoadPlugins();
 const config = require('./webpack.config.js');
-const options = {};
 
 gulp.task('assets', (cb) => gulp.src('src/public/**').pipe(gulp.dest('dist/')).pipe($.size({title: 'assets'})));
 

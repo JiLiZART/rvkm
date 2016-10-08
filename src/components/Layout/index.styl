@@ -1,0 +1,46 @@
+$ctx = layout
+
+.{$ctx}
+  display flex
+
+  .{$ctx}__nav
+    position fixed
+    top 42px
+    bottom 0
+    z-index 1
+
+    overflow-y auto
+
+    transform translate3d(-280px, 0, 0)
+    transition transform 0.4s
+
+    padding-top 25px
+    flex-basis 280px
+    width 280px
+    background #edeef0
+
+    +desktop()
+      transform translate3d(0, 0, 0)
+
+  .{$ctx}__content
+    transition transform 0.4s
+    margin-top 25px
+    flex-basis 100%
+    min-height 600px
+    background #fff
+    border-radius 2px
+    box-shadow 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8
+
+    +desktop()
+      margin-left 280px
+
+  &.{$ctx}_menu
+    .{$ctx}__nav
+      transform translate3d(0, 0, 0)
+
+    .{$ctx}__content
+      transform translate3d(280px, 0, 0)
+
+      +desktop()
+        transform translate3d(0, 0, 0)
+        margin-left 280px

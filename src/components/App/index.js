@@ -11,25 +11,22 @@ import 'react-virtualized/styles.css';
 import User from 'models/User';
 import {connect} from 'react-redux'
 
-const mapStateToProps = (state) => {
-  return {
-    user: new User(state.user),
-    player: state.player,
-    menu: state.menu
-  };
-};
+const mapStateToProps = (state) => ({
+  user: new User(state.user),
+  player: state.player
+});
 
 const app = block('app');
 
 class App extends Component {
 
   render() {
-    const {children, user, menu, player} = this.props;
+    const {children, user, player} = this.props;
     const loggedIn = user.getId();
 
     if (loggedIn) {
       return (
-        <section className={app({menu: menu.visible, player: !!player.audio.id})}>
+        <section className={app({player: !!player.audio.id})}>
           <div className={app('bar', {visible: !!player.audio.id})}>
             <Timeline />
             <Controls />

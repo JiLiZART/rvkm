@@ -2,7 +2,7 @@ import {createAction} from 'redux-actions';
 import Audio from 'models/Audio';
 import {hide as menuHide} from './menu';
 
-export const start = createAction('AUDIOS_FETCHING');
+export const start = createAction('AUDIOS_FETCHING', (id) => id);
 export const error = createAction('AUDIOS_ERROR', (err) => err);
 export const load = createAction('AUDIOS', (item) => item);
 export const addSuccess = createAction('AUDIOS_ADD', (item) => item);
@@ -22,52 +22,29 @@ export function remove(audioID, userID) {
 
 export function fetchRecomended(userID, offset = 0, count = 100) {
   return (dispatch) => {
-    dispatch(start());
-    return Audio.getRecommendations(userID, offset, count).then((r) => {
-      const response = {
-        id: 'recomended',
-        title: 'Recomended',
-        items: r.items,
-        count: r.count
-      };
-
-      dispatch(load(response));
+    dispatch(start('recomended'));
+    return Audio.getRecommendations(userID, offset, count).then(({items, count}) => {
+      dispatch(load({id: 'recomended', title: 'Recomended', items, count}));
       dispatch(menuHide());
-
     }, (err) => dispatch(error(err)));
   };
 }
 
 export function fetchWall(userID, offset = 0, count = 100) {
   return (dispatch) => {
-    dispatch(start());
+    dispatch(start('wall'));
     return Audio.getWall(userID, offset, count).then((items) => {
-      const response = {
-        id: 'wall',
-        title: 'Wall',
-        items,
-        count: items.length
-      };
-
-      dispatch(load(response));
+      dispatch(load({id: 'wall', title: 'Wall', items, count: items.length}));
       dispatch(menuHide());
-
     }, (err) => dispatch(error(err)));
   };
 }
 
 export function fetchPopular(userID, offset = 0, count = 100) {
   return (dispatch) => {
-    dispatch(start());
+    dispatch(start('popular'));
     return Audio.getPopular(userID, offset, count).then((items) => {
-      const response = {
-        id: 'popular',
-        title: 'Popular',
-        items,
-        count: items.length
-      };
-
-      dispatch(load(response));
+      dispatch(load({id: 'popular', title: 'Popular', items, count: items.length}));
       dispatch(menuHide());
     }, (err) => dispatch(error(err)));
   };
@@ -75,67 +52,39 @@ export function fetchPopular(userID, offset = 0, count = 100) {
 
 export function fetchAll(userID, offset = 0, count = 100) {
   return (dispatch) => {
-    dispatch(start());
-    return Audio.getAll(userID, offset, count).then((r) => {
-      const response = {
-        id: 'all',
-        title: 'All',
-        items: r.items,
-        count: r.count
-      };
-
-      dispatch(load(response));
+    dispatch(start('all'));
+    return Audio.getAll(userID, offset, count).then(({items, count}) => {
+      dispatch(load({id: 'all', title: 'All', items, count}));
       dispatch(menuHide());
     }, (err) => dispatch(error(err)))
   };
 }
 
-export function fetchAlbum(userID, albumID, albumTitle, offset = 0, count = 100) {
+export function fetchAlbum(userID, id, title, offset = 0, count = 100) {
   return (dispatch) => {
-    dispatch(start());
-    return Audio.get(userID, albumID, offset, count).then((r) => {
-      const response = {
-        id: albumID,
-        title: albumTitle,
-        items: r.items,
-        count: r.count
-      };
-
-      dispatch(load(response));
+    dispatch(start(id));
+    return Audio.get(userID, id, offset, count).then(({items, count}) => {
+      dispatch(load({id, title, items, count}));
       dispatch(menuHide());
     }, (err) => dispatch(error(err)))
   };
 }
 
-export function fetchGroup(groupID, groupTitle) {
+export function fetchGroup(id, title, offset = 0, count = 100) {
   return (dispatch) => {
-    dispatch(start());
-    return Audio.get(groupID, null, 0, 1000).then((r) => {
-      const response = {
-        id: groupID,
-        title: groupTitle,
-        items: r.items,
-        count: r.count
-      };
-
-      dispatch(load(response));
+    dispatch(start(id));
+    return Audio.get(id, null, offset, count).then(({items, count}) => {
+      dispatch(load({id, title, items, count}));
       dispatch(menuHide());
     }, (err) => dispatch(error(err)))
   };
 }
 
-export function fetchFriend(userID, userTitle) {
+export function fetchFriend(id, title, offset = 0, count = 100) {
   return (dispatch) => {
-    dispatch(start());
-    return Audio.get(userID, null, 0, 1000).then((r) => {
-      const response = {
-        id: userID,
-        title: userTitle,
-        items: r.items,
-        count: r.count
-      };
-
-      dispatch(load(response));
+    dispatch(start(id));
+    return Audio.get(id, null, offset, count).then(({items, count}) => {
+      dispatch(load({id, title, items, count}));
       dispatch(menuHide());
     }, (err) => dispatch(error(err)))
   };

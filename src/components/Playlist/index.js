@@ -40,10 +40,10 @@ class Playlist extends Component {
   };
 
   onTrackClick = (audio) => {
-    const {loadAndPlay, play, pause, loadPlaylist, playlist, player} = this.props;
+    const {loadAndPlay, play, pause, loadPlaylist, audios, player} = this.props;
 
-    if (player.playlist.id !== playlist.id) {
-      loadPlaylist(playlist);
+    if (player.playlist.id !== audios.id) {
+      loadPlaylist(audios);
     }
 
     if (player.audio.id !== audio.id) {
@@ -58,10 +58,10 @@ class Playlist extends Component {
   };
 
   render() {
-    const {playlist, onMore} = this.props;
+    const {audios, onMore} = this.props;
     let pagination = null;
 
-    if (!playlist) {
+    if (!audios) {
       return (
         <section className={b}>
           <div className={b('loading')}><Error title="Nothing selected" desc="Please, select some items in list"/></div>
@@ -69,15 +69,15 @@ class Playlist extends Component {
       );
     }
 
-    if (playlist.error) {
+    if (audios.error && audios.error.error_msg) {
       return (
         <section className={b}>
-          <div className={b('loading')}><Error title="An error has occurred" desc={playlist.error.error_msg}/></div>
+          <div className={b('loading')}><Error title="An error has occurred" desc={audios.error.error_msg}/></div>
         </section>
       );
     }
 
-    if (playlist.fetching) {
+    if (audios.fetching) {
       return (
         <section className={b}>
           <div className={b('loading')}><Spinner size="lg" type="primary"/></div>
@@ -85,8 +85,8 @@ class Playlist extends Component {
       );
     }
 
-    if (playlist.items) {
-      if (playlist.items.length === 0) {
+    if (audios.items) {
+      if (audios.items.length === 0) {
         return (
           <section className={b}>
             <div className={b('loading')}><Error title="List is empty"/></div>
@@ -94,14 +94,14 @@ class Playlist extends Component {
         );
       }
 
-      if (playlist.items.length !== playlist.count) {
+      if (audios.items.length < audios.count) {
         pagination = (<PaginationMore onLoad={onMore}/>);
       }
     }
 
     return (
       <section className={b}>
-        {Audio.hydrateArray(playlist.items || []).map(this.rowRender)}
+        {Audio.hydrateArray(audios.items || []).map(this.rowRender)}
         {pagination}
       </section>
     );

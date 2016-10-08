@@ -2,9 +2,9 @@ import React, {PropTypes} from 'react';
 import {Provider} from 'react-redux';
 import {Router, Route, IndexRoute, Redirect, browserHistory, hashHistory} from 'react-router';
 import App from 'components/App';
-import Albums from 'components/Albums';
-import Friends from 'components/Friends';
-import Groups from 'components/Groups';
+import Albums from 'containers/Albums';
+import Friends from 'containers/Friends';
+import Groups from 'containers/Groups';
 
 import './index.styl';
 

@@ -9,6 +9,7 @@ const resolve = {
     alias: {
       'styles': __dirname + '/src/styles',
       'components': __dirname + '/src/components/',
+      'containers': __dirname + '/src/containers/',
       'reducers': __dirname + '/src/reducers/',
       'actions': __dirname + '/src/actions/',
       'models': __dirname + '/src/models',
