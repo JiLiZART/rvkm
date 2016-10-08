@@ -5,6 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "start": "node server.js",
+    "publish": "env NODE_ENV=production gulp ghpages",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
