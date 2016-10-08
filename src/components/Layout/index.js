@@ -8,7 +8,7 @@ import Playlist from 'components/Playlist';
 const b = block('layout');
 
 const Layout = ({menu, items, audios, onMore}) => (
-  <section className={b({menu: menu})}>
+  <section className={b({menu})}>
     <div className={b('nav')}>
       <Menu items={items}/>
     </div>
