@@ -12,7 +12,7 @@ import User from 'models/User';
 import Audio from 'models/Audio';
 
 import {connect} from 'react-redux';
-import {load, play, pause, playlist as loadPlaylist} from 'actions/player';
+import {loadAndPlay, play, pause, playlist as loadPlaylist} from 'actions/player';
 
 const mapStateToProps = (state) => ({
   user: new User(state.user),
@@ -40,15 +40,14 @@ class Playlist extends Component {
   };
 
   onTrackClick = (audio) => {
-    const {load, play, pause, loadPlaylist, playlist, player} = this.props;
+    const {loadAndPlay, play, pause, loadPlaylist, playlist, player} = this.props;
 
     if (player.playlist.id !== playlist.id) {
       loadPlaylist(playlist);
     }
 
     if (player.audio.id !== audio.id) {
-      load(audio);
-      play();
+      loadAndPlay(audio);
     } else {
       if (player.playing) {
         pause();
@@ -111,5 +110,5 @@ class Playlist extends Component {
 
 export default connect(
   mapStateToProps,
-  {load, play, pause, loadPlaylist}
+  {loadAndPlay, play, pause, loadPlaylist}
 )(Playlist);

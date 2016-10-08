@@ -35,7 +35,8 @@ class Controls extends Component {
     const {player} = this.props;
 
     AudioPlayer.on('progress', () => {
-      this.setState(AudioPlayer.getInfo());
+      const info = AudioPlayer.getInfo();
+      this.setState({time: info.time});
     });
 
     AudioPlayer.on('ended', () => {
@@ -46,7 +47,7 @@ class Controls extends Component {
   }
 
   onSeqClick = () => {
-    const {inPlaylist} = this.state;
+    const {playlistToggle} = this.props;
 
     playlistToggle();
   };
@@ -148,7 +149,7 @@ class Controls extends Component {
           <Button className={block('btn', {next: true})} onClick={this.onNextClick} size="m" view="plain" icon={<Icon name="fast_forward" size="m" style="blue" />}/>
           <Button className={block('btn', {seq: true})} onClick={this.onSeqClick} size="m" view="plain" icon={<Icon name="playlist_play" light={!inPlaylist} size="m" style="blue" />}/>
           <Popup visible={inPlaylist} title={player.playlist.title}>
-            <Playlist playlist={player.playlist}/>
+            <Playlist playlist={player.playlist} />
           </Popup>
         </div>
         <div className={block('track-container')}>

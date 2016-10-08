@@ -53,7 +53,7 @@ class PaginationMore extends Component {
   onMoreClick = () => {
     const {onLoad} = this.props;
 
-    onLoad();
+    onLoad(() => {});
   };
 
   render() {

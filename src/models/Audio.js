@@ -49,7 +49,7 @@ export default class Audio {
   }
 
   getDuration() {
-    return Audio.formatDuration(this.duration);
+    return this.duration;
   }
 
   getUrl() {
@@ -90,19 +90,6 @@ export default class Audio {
 
   static hydrateArray(items) {
     return items.map(Audio.hydrate);
-  }
-
-  static formatDuration(sec) {
-    const hours = parseInt(sec / 3600);
-    const minutes = parseInt(sec / 60) % 60;
-    const seconds = sec % 60;
-    const pad = (val) => (val < 10 ? '0' + val : val);
-    let time = '';
-
-    if (hours) time += pad(hours) + ':';
-    if (minutes) time += pad(minutes) + ':';
-
-    return time + pad(seconds);
   }
 
   static get(userID, albumID, offset = 0, count = 10) {

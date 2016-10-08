@@ -29,16 +29,31 @@ export function init() {
   };
 }
 
+function loadFromUrl(audio, done) {
+  Audio.getById(audio.id, audio.owner_id).then((items) => {
+    if (Array.isArray(items) && items.length) {
+      const item = items[0];
+
+      AudioPlayer.loadFromUrl(item.url).then(() => {
+        done(item);
+      });
+    }
+  });
+}
+
 export function load(audio) {
   return (dispatch) => {
-    Audio.getById(audio.id, audio.owner_id).then((items) => {
-      if (Array.isArray(items) && items.length) {
-        const item = items[0];
+    loadFromUrl(audio, (item) => {
+      dispatch(loadSuccess(item));
+    });
+  };
+}
 
-        AudioPlayer.loadFromUrl(item.url).then(() => {
-          dispatch(loadSuccess(item));
-        });
-      }
+export function loadAndPlay(audio) {
+  return (dispatch) => {
+    loadFromUrl(audio, (item) => {
+      dispatch(loadSuccess(item));
+      dispatch(play());
     });
   };
 }
@@ -66,16 +81,14 @@ export function pause() {
 
 export function next(audio) {
   return (dispatch) => {
-    dispatch(load(audio));
-    dispatch(play());
+    dispatch(loadAndPlay(audio));
     dispatch(nextSuccess());
   };
 }
 
 export function prev(audio) {
   return (dispatch) => {
-    dispatch(load(audio));
-    dispatch(play());
+    dispatch(loadAndPlay(audio));
     dispatch(prevSuccess());
   };
 }

@@ -62,11 +62,7 @@ class AudioPlayer {
     });
   }
 
-  loadHandler(done) {
-    return () => {
-      done();
-    };
-  }
+  loadHandler = (done) => () => done();
 
   play() {
     this.audio.play();
@@ -132,13 +128,13 @@ class AudioPlayer {
       const time = duration - Math.round(this.getCurrentTime());
 
       return {
-        time: Audio.formatDuration(Math.round(time)),
+        time: Math.round(time),
         progress: time ? ((duration - time) / duration) * 100 : 0,
         buffer: buffered / duration * 100
-      }
+      };
     }
 
-    return {}
+    return {};
   }
 }
 
