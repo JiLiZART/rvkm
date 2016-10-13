@@ -30,7 +30,7 @@ const formatDuration = (sec) => {
   if (minutes) time += pad(minutes) + ':';
 
   return time + pad(seconds);
-}
+};
 
 class Track extends Component {
   constructor(props) {
