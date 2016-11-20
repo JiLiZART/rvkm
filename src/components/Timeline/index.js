@@ -3,7 +3,6 @@ import block from 'bem-cn';
 import './index.styl';
 
 import AudioPlayer from 'models/AudioPlayer';
-import throttle from 'lodash/throttle';
 
 import {connect} from 'react-redux';
 import {seek} from 'actions/player';

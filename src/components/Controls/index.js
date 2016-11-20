@@ -21,14 +21,9 @@ const mapStateToProps = (state) => ({player: state.player});
 const block = cn('controls');
 
 class Controls extends Component {
-  constructor(props, context) {
-    super(props, context);
-
-    this.state = {
-      inPlaylist: false,
-      volume: 100,
-      time: 0
-    }
+  state = {
+    volume: 100,
+    time: 0
   }
 
   componentDidMount() {
@@ -72,7 +67,7 @@ class Controls extends Component {
     } else {
       items.forEach((item, idx) => {
         if (item.id === player.audio.id) {
-          audio = idx === 0 ? items[items.length-1] : items[idx-1]
+          audio = idx === 0 ? items[items.length - 1] : items[idx - 1]
         }
       });
     }
@@ -90,7 +85,7 @@ class Controls extends Component {
     } else {
       items.forEach((item, idx) => {
         if (item.id === player.audio.id) {
-          audio = idx === items.length-1 ? items[0] : items[idx+1]
+          audio = idx === items.length - 1 ? items[0] : items[idx + 1]
         }
       });
     }
@@ -133,9 +128,8 @@ class Controls extends Component {
   render() {
     const {time, volume} = this.state;
     const {player} = this.props;
+    const {sampleRate, inPlaylist, playing:isPlaying} = player;
     const audio = Audio.hydrate(player.audio);
-    const isPlaying = player.playing;
-    const inPlaylist = player.inPlaylist;
 
     if (!player.audio) {
       return (<div className={block}></div>)
@@ -144,23 +138,24 @@ class Controls extends Component {
     return (
       <div className={block}>
         <div className={block('playback')}>
-          <Button className={block('btn', {prev: true})} onClick={this.onPrevClick} size="m" view="plain" icon={<Icon name="fast_rewind" size="m" style="blue" />}/>
-          <PlayButton className={block('btn', {play: true})} onClick={this.onPlayClick} size="m" playing={isPlaying} />
-          <Button className={block('btn', {next: true})} onClick={this.onNextClick} size="m" view="plain" icon={<Icon name="fast_forward" size="m" style="blue" />}/>
-          <Button className={block('btn', {seq: true})} onClick={this.onSeqClick} size="m" view="plain" icon={<Icon name="playlist_play" light={!inPlaylist} size="m" style="blue" />}/>
+          <Button className={block('btn', {prev: true})} onClick={this.onPrevClick} size="m" view="plain" icon={<Icon name="fast_rewind" size="m" style="blue"/>}/>
+          <PlayButton className={block('btn', {play: true})} onClick={this.onPlayClick} size="m" playing={isPlaying}/>
+          <Button className={block('btn', {next: true})} onClick={this.onNextClick} size="m" view="plain" icon={<Icon name="fast_forward" size="m" style="blue"/>}/>
+          <Button className={block('btn', {seq: true})} onClick={this.onSeqClick} size="m" view="plain" icon={<Icon name="playlist_play" light={!inPlaylist} size="m" style="blue"/>}/>
           <Popup visible={inPlaylist} title={player.playlist.title}>
-            <Playlist playlist={player.playlist} />
+            <Playlist audios={player.playlist}/>
           </Popup>
         </div>
         <div className={block('track-container')}>
-          <Track className={block('track')} size="m" id={audio.getId()} url={audio.getUrl()} duration={time} artist={audio.getArtist()} song={audio.getSong()} />
+          <Track className={block('track')} size="m" id={audio.getId()} url={audio.getUrl()} duration={time} artist={audio.getArtist()} song={audio.getSong()}/>
+          <div>{sampleRate} kHz</div>
         </div>
         <div className={block('volume')}>
-          <Button className={block('btn', {loop: true})} onClick={this.onLoopClick} size="m" view="plain" icon={<Icon name="repeat" light={!player.loop} size="m" style="blue" />}/>
-          <Button className={block('btn', {shuffle: true})} onClick={this.onShuffleClick} size="m" view="plain" icon={<Icon name="shuffle" light={!player.shuffle} size="m" style="blue" />}/>
-          <Button className={block('btn', {mute: true})} onClick={this.onMuteClick} size="m" view="plain" icon={<Icon name="volume_mute" size="m" style="blue" />}/>
+          <Button className={block('btn', {loop: true})} onClick={this.onLoopClick} size="m" view="plain" icon={<Icon name="repeat" light={!player.loop} size="m" style="blue"/>}/>
+          <Button className={block('btn', {shuffle: true})} onClick={this.onShuffleClick} size="m" view="plain" icon={<Icon name="shuffle" light={!player.shuffle} size="m" style="blue"/>}/>
+          <Button className={block('btn', {mute: true})} onClick={this.onMuteClick} size="m" view="plain" icon={<Icon name="volume_mute" size="m" style="blue"/>}/>
           <div className={block('volume-slider')}><InputRange value={volume} type='range' max={100} min={0} onChange={this.onVolumeChange}/></div>
-          <Button className={block('btn', {max: true})} onClick={this.onMaxClick} size="l" view="plain" icon={<Icon name="volume_up" size="l" style="blue" />}/>
+          <Button className={block('btn', {max: true})} onClick={this.onMaxClick} size="l" view="plain" icon={<Icon name="volume_up" size="l" style="blue"/>}/>
         </div>
       </div>
     );

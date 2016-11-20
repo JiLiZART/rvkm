@@ -4,7 +4,7 @@ import Audio from 'models/Audio';
 
 export const playlist = createAction('PLAYER_PLAYLIST', (item) => item);
 
-export const initSuccess = createAction('PLAYER_INIT');
+export const initSuccess = createAction('PLAYER_INIT', (data) => data);
 
 export const loadStart = createAction('PLAYER_LOAD_FETCHING');
 export const loadSuccess = createAction('PLAYER_LOAD', (file) => file);
@@ -24,7 +24,8 @@ export const end = createAction('PLAYER_END');
 export function init() {
   return (dispatch) => {
     dispatch(initSuccess({
-      volume: AudioPlayer.getVolume()
+      volume: AudioPlayer.getVolume(),
+      sampleRate: AudioPlayer.getSampleRate()
     }));
   };
 }

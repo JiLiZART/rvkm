@@ -3,6 +3,7 @@ import {handleActions} from 'redux-actions';
 const defaultState = {
   playing: false,
   position: null,
+  sampleRate: '0',
   volume: 0,
   loop: false,
   shuffle: false,

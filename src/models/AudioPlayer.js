@@ -1,5 +1,4 @@
 import Promise from 'bluebird';
-import Audio from 'models/Audio';
 
 class AudioPlayer {
 
@@ -10,7 +9,26 @@ class AudioPlayer {
   HAVE_ENOUGH_DATA = 4;
 
   constructor() {
-    this.audio = new window.Audio();
+    this.createContext();
+  }
+
+  createContext() {
+    this.context = null;
+    this.audio = null;
+
+    const context = new (window.AudioContext || window.webkitAudioContext)();
+    const audioNode = new window.Audio();
+    const source = context.createMediaElementSource(audioNode);
+
+    audioNode.crossOrigin = 'anonymous';
+    source.connect(context.destination);
+
+    this.context = context;
+    this.audio = audioNode;
+  }
+
+  getSampleRate() {
+    return Number(this.context.sampleRate / 1000).toFixed(1);
   }
 
   on(event, handler) {
@@ -24,6 +42,7 @@ class AudioPlayer {
   }
 
   loadFromUrl(url) {
+    this.audio.pause(0);
     this.audio.src = url;
 
     return new Promise((resolve, reject) => {
