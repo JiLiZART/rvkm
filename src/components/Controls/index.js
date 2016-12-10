@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import cn from 'bem-cn';
 import './index.styl';
 
@@ -16,15 +16,15 @@ import AudioPlayer from 'models/AudioPlayer';
 import {connect} from 'react-redux';
 import {play, pause, next, prev, volume, mute, max, shuffleToggle, loopToggle, end, playlistToggle} from 'actions/player';
 
-const mapStateToProps = (state) => ({player: state.player});
+const mapStateToProps = (state) => ({player: state.player.toJS()});
 
 const block = cn('controls');
 
-class Controls extends Component {
+class Controls extends PureComponent {
   state = {
     volume: 100,
     time: 0
-  }
+  };
 
   componentDidMount() {
     const {player} = this.props;

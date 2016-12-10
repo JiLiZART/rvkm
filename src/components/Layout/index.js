@@ -12,7 +12,9 @@ const Layout = ({menu, items, audios, onMore}) => (
     <div className={b('nav')}>
       <Menu items={items}/>
     </div>
-    <div className={b('content')}><Playlist audios={audios} onMore={onMore}/></div>
+    <div className={b('content')}>
+      <Playlist audios={audios} onMore={onMore}/>
+    </div>
   </section>
 );
 

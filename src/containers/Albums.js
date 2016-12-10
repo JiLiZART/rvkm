@@ -13,9 +13,11 @@ import {connect} from 'react-redux'
 const mapStateToProps = (state) => ({
   user: new User(state.user),
   albums: state.albums,
-  audios: state.audios,
+  audios: state.audios.toJS(),
   menu: state.menu
 });
+
+const getTitle = (items, id) => ((items.find((i) => i.id === id) || {}).title);
 
 class Albums extends Base {
   ID_ALL = 'all';
@@ -40,9 +42,9 @@ class Albums extends Base {
 
   fetchAudios(offset = 0) {
     const {
-      params,
+      params:{id},
       user,
-      albums,
+      albums:{items},
       fetchRecomended,
       fetchWall,
       fetchAll,
@@ -51,17 +53,9 @@ class Albums extends Base {
       router
     } = this.props;
 
-    const {items} = albums;
-    const id = Number(params.id);
-    const getTitle = (items, id) => ((items.find((item) => item.id === id) || {}).title);
+    !id && router.push(`/albums/${this.ID_RECOMENDED}`);
 
-    if (!params.id) {
-      router.push('/albums/recomended');
-    }
-
-    this.setState({audiosOffset: offset});
-
-    switch (params.id) {
+    switch (id) {
       case this.ID_RECOMENDED:
         return fetchRecomended(user.getId(), offset, this.COUNT);
       case this.ID_WALL:
@@ -71,24 +65,29 @@ class Albums extends Base {
       case this.ID_ALL:
         return fetchAll(user.getId(), offset, this.COUNT);
       default:
-        return fetchAlbum(user.getId(), id, getTitle(items, id), offset, this.COUNT);
+        return fetchAlbum(user.getId(), Number(id), getTitle(items, Number(id)), offset, this.COUNT);
     }
   }
 
-  mapItem = (album) => ({
+  mapItem = (id) => (album) => ({
     id: album.getId(),
     url: `/albums/${album.getId()}`,
     name: album.getName(),
-    active: album.getId() == this.props.params.id
+    active: album.getId() === id
   });
 
   render() {
-    const {albums, audios, menu} = this.props;
+    const {audios, menu} = this.props;
+    const items = this._getItems();
+
+    return (<Layout menu={menu.visible} items={items} audios={audios} onMore={this.onMoreClick(audios)}/>);
+  }
+
+  _getItems() {
+    const {albums} = this.props;
     const albumsItems = albums.items;
     const defaultItems = this.getDefaultItems();
-    const items = Album.hydrateArray([...defaultItems, ...albumsItems]).map(this.mapItem);
-
-    return (<Layout menu={menu.visible} items={items} audios={audios} onMore={this.onMoreClick}/>);
+    return Album.hydrateArray([...defaultItems, ...albumsItems]).map(this.mapItem(this.props.params.id))
   }
 }
 

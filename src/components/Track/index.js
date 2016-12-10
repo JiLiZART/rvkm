@@ -15,7 +15,7 @@ import {add, remove} from 'actions/audios';
 const b = block('track');
 
 const mapStateToProps = (state) => ({
-  player: state.player,
+  player: state.player.toJS(),
   user: new User(state.user)
 });
 

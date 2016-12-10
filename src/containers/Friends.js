@@ -12,9 +12,11 @@ import {connect} from 'react-redux'
 const mapStateToProps = (state) => ({
   user: new User(state.user),
   friends: state.friends,
-  audios: state.audios,
+  audios: state.audios.toJS(),
   menu: state.menu
 });
+
+const getTitle = (items, id) => (items.find((u) => u.id === id) || {}).name;
 
 class Friends extends Base {
   fetchItems() {
@@ -25,40 +27,36 @@ class Friends extends Base {
 
   fetchAudios(offset = 0) {
     const {
-      friends,
       fetchFriend,
-      params,
+      params:{id},
       router
     } = this.props;
 
-    const {items} = friends;
-    const id = Number(params.id);
-    const getTitle = (items, id) => {
-      const user = items.find((u) => u.id === id);
+    const items = this.getItems();
 
-      return user ? (new User(user)).getFullName() : '';
-    };
-
-    if (!params.id && items.length) {
+    if (!id && items.length) {
       router.push(`/friends/${items[0].id}`);
+      return;
     }
-
-    this.setState({audiosOffset: offset});
 
     return fetchFriend(id, getTitle(items, id), offset, this.COUNT);
   }
 
-  mapItem = (user) => ({
+  mapItem = (id) => (user) => ({
     id: user.getId(),
     url: `/friends/${user.getId()}`,
     cover: user.getAvatar(),
     name: user.getFullName(),
-    active: user.getId() == this.props.params.id
+    active: user.getId() == id
   });
 
+  getItems() {
+    return User.hydrateArray(this.props.friends.items).map(this.mapItem(this.props.params.id));
+  }
+
   render() {
-    const {friends, audios, menu} = this.props;
-    const items = User.hydrateArray(friends.items).map(this.mapItem);
+    const {audios, menu} = this.props;
+    const items = this.getItems();
 
     return (<Layout menu={menu.visible} items={items} audios={audios} onMore={this.onMoreClick}/>);
   }

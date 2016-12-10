@@ -1,12 +1,12 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import block from 'bem-cn';
 import './index.styl';
 
 import Track from 'components/Track';
 import Spinner from 'components/Spinner';
 import Error from 'components/Error';
-import PaginationMore from 'components/PaginationMore';
 import PlayButton from 'components/PlayButton';
+import InfiniteScroll from 'redux-infinite-scroll';
 
 import User from 'models/User';
 import Audio from 'models/Audio';
@@ -16,12 +16,36 @@ import {loadAndPlay, play, pause, playlist as loadPlaylist} from 'actions/player
 
 const mapStateToProps = (state) => ({
   user: new User(state.user),
-  player: state.player
+  player: state.player.toJS()
 });
 
 const b = block('playlist');
 
-class Playlist extends Component {
+const errorMessage = (error) => (
+  <section className={b}>
+    <div className={b('loading')}><Error title="An error has occurred" desc={error}/></div>
+  </section>
+);
+
+const notSelectedMessage = () => (
+  <section className={b}>
+    <div className={b('loading')}><Error title="Nothing selected" desc="Please, select some items in list"/></div>
+  </section>
+);
+
+const loadingMessage = () => (
+  <section className={b}>
+    <div className={b('loading')}><Spinner size="lg" type="primary"/></div>
+  </section>
+);
+
+const emptyMessage = () => (
+  <section className={b}>
+    <div className={b('loading')}><Error title="List is empty"/></div>
+  </section>
+);
+
+class Playlist extends PureComponent {
 
   rowRender = (audio, i) => {
     const {player} = this.props;
@@ -57,54 +81,47 @@ class Playlist extends Component {
     }
   };
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const props = this.props;
+
+    return props.audios !== nextProps.audios;
+  }
+
+  _getAudios() {
+    return this.props.audios;
+  }
+
   render() {
     const {audios, onMore} = this.props;
-    let pagination = null;
 
     if (!audios) {
-      return (
-        <section className={b}>
-          <div className={b('loading')}><Error title="Nothing selected" desc="Please, select some items in list"/></div>
-        </section>
-      );
+      return notSelectedMessage();
     }
 
     if (audios.error && audios.error.error_msg) {
-      return (
-        <section className={b}>
-          <div className={b('loading')}><Error title="An error has occurred" desc={audios.error.error_msg}/></div>
-        </section>
-      );
+      return errorMessage(audios.error.error_msg)
     }
 
-    if (audios.fetching) {
-      return (
-        <section className={b}>
-          <div className={b('loading')}><Spinner size="lg" type="primary"/></div>
-        </section>
-      );
+    if (audios.fetching || !audios.items) {
+      return loadingMessage();
     }
 
-    if (audios.items) {
-      if (audios.items.length === 0) {
-        return (
-          <section className={b}>
-            <div className={b('loading')}><Error title="List is empty"/></div>
-          </section>
-        );
-      }
-
-      if (audios.items.length < audios.count) {
-        pagination = (<PaginationMore onLoad={onMore}/>);
-      }
+    if (audios.items && audios.items.length === 0) {
+      return emptyMessage();
     }
 
-    return (
-      <section className={b}>
-        {Audio.hydrateArray(audios.items || []).map(this.rowRender)}
-        {pagination}
-      </section>
-    );
+    return (<InfiniteScroll className={b}
+                            threshold={100}
+                            elementIsScrollable={false}
+                            loadingMore={audios.fetching}
+                            loadMore={onMore}
+                            showLoader={true}
+                            items={this._renderAudios()}
+                            hasMore={audios.count >= audios.items.length}/>);
+  }
+
+  _renderAudios() {
+    return Audio.hydrateArray(this.props.audios.items || []).map(this.rowRender);
   }
 }
 

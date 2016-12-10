@@ -9,22 +9,18 @@ import {seek} from 'actions/player';
 
 const mapStateToProps = (state) => {
   return {
-    player: state.player
+    player: state.player.toJS()
   };
 };
 
 const timeline = block('timeline');
 
 class Timeline extends Component {
-  constructor(props, context) {
-    super(props, context);
-
-    this.state = {
-      seek: 0,
-      buffer: 0,
-      progress: 0
-    };
-  }
+  state = {
+    seek: 0,
+    buffer: 0,
+    progress: 0
+  };
 
   componentDidMount() {
     window.addEventListener('resize', this.updateTrail);
@@ -64,7 +60,7 @@ class Timeline extends Component {
            onMouseMove={this.handleTrailMove}
            onMouseLeave={this.handleTrailLeave}
            onClick={this.handleTrailClick}
-           ref={(el) => this._trail = el} >
+           ref={(el) => this._trail = el}>
         <div className={timeline('trail')}>
           <div className={timeline('buffer')} style={{width: buffer + '%'}}></div>
           <div className={timeline('seek')} style={{width: seek + '%'}}></div>

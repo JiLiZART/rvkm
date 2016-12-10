@@ -6,23 +6,31 @@ import Auth from 'components/Auth';
 import Navbar from 'components/Navbar';
 import Timeline from 'components/Timeline';
 import Controls from 'components/Controls';
-import 'react-virtualized/styles.css';
+import {status} from 'actions/user';
 
 import User from 'models/User';
 import {connect} from 'react-redux'
 
 const mapStateToProps = (state) => ({
   user: new User(state.user),
-  player: state.player
+  player: state.player.toJS()
 });
 
 const app = block('app');
 
 class App extends Component {
 
+  componentWillMount() {
+    const {user} = this.props;
+
+    if (!user.isLoggedIn()) {
+        this.props.userStatus()
+    }
+  }
+
   render() {
     const {children, user, player} = this.props;
-    const loggedIn = user.getId();
+    const loggedIn = user.isLoggedIn();
 
     if (loggedIn) {
       return (
@@ -52,5 +60,6 @@ class App extends Component {
 }
 
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  {userStatus: status}
 )(App);
