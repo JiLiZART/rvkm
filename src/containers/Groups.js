@@ -13,9 +13,11 @@ import {connect} from 'react-redux'
 const mapStateToProps = (state) => ({
   user: new User(state.user),
   groups: state.groups,
-  audios: state.audios,
+  audios: state.audios.toJS(),
   menu: state.menu
 });
+
+const getTitle = (items, id) => ((items.find((group) => group.id === id) || {}).name);
 
 class Groups extends Base {
   fetchItems() {
@@ -34,15 +36,12 @@ class Groups extends Base {
 
     const {items} = groups;
     const id = Number(params.id);
-    const getTitle = (items, id) => ((items.find((group) => group.id === id) || {}).name);
 
     if (!params.id && items.length) {
       router.push(`/groups/${items[0].id}`);
     }
 
-    this.setState({audiosOffset: offset});
-
-    return fetchGroup(`-${id}`, getTitle(items, id));
+    return fetchGroup(`-${id}`, getTitle(items, id), offset, this.COUNT);
   }
 
   mapItem = (group) => ({

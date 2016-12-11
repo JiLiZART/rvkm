@@ -1,5 +1,31 @@
 import Api from './Api';
 import Wall from './Wall';
+import AudioPlayer from './AudioPlayer';
+
+const isAttachmentAudio = (attachment) => {
+  return attachment.type === 'audio';
+};
+
+const fromAttachments = (attachments) => {
+  return (attachments || []).filter(isAttachmentAudio).map((file) => file.audio);
+};
+
+const mapPost = (post) => {
+  var audios = [];
+
+  if (Array.isArray(post.attachments) && post.attachments.length) {
+    audios = audios.concat(fromAttachments(post.attachments));
+  }
+
+  if (Array.isArray(post.copy_history) && post.copy_history.length &&
+    Array.isArray(post.copy_history[0].attachments) && post.copy_history[0].attachments.length
+  ) {
+    audios = audios.concat(fromAttachments(post.copy_history[0].attachments));
+  }
+
+  return audios;
+};
+
 
 /**
  id  идентификатор аудиозаписи.
@@ -92,6 +118,20 @@ export default class Audio {
     return items.map(Audio.hydrate);
   }
 
+  static loadFromUrl(audio) {
+    return new Promise((resolve, reject) => {
+      Audio.getById(audio.id, audio.owner_id).then((items) => {
+        if (Array.isArray(items) && items.length) {
+          const item = items[0];
+
+          AudioPlayer.loadFromUrl(item.url).then(() => {
+            resolve(item);
+          }, reject);
+        }
+      }, reject);
+    });
+  }
+
   static get(userID, albumID, offset = 0, count = 10) {
     const params = {owner_id: userID, offset, count};
 
@@ -121,31 +161,6 @@ export default class Audio {
   }
 
   static getWall(userID) {
-
-    const isAttachmentAudio = (attachment) => {
-      return attachment.type === 'audio';
-    };
-
-    const fromAttachments = (attachments) => {
-      return (attachments || []).filter(isAttachmentAudio).map((file) => file.audio);
-    };
-
-    const mapPost = (post) => {
-      var audios = [];
-
-      if (Array.isArray(post.attachments) && post.attachments.length) {
-        audios = audios.concat(fromAttachments(post.attachments));
-      }
-
-      if (Array.isArray(post.copy_history) && post.copy_history.length &&
-        Array.isArray(post.copy_history[0].attachments) && post.copy_history[0].attachments.length
-      ) {
-        audios = audios.concat(fromAttachments(post.copy_history[0].attachments));
-      }
-
-      return audios;
-    };
-
     return Wall.get(userID).then((r) => {
       return r.items.map(mapPost).reduce((prev, next) => prev.concat(next), [])
     })

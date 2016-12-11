@@ -3,11 +3,7 @@ import React, {Component} from 'react';
 class Base extends Component {
   COUNT = 100;
 
-  constructor(props, context) {
-    super(props, context);
-
-    this.state = {audiosOffset: 0};
-  }
+  state = {audiosOffset: 0};
 
   componentDidMount() {
     this.fetchItems().then(() => this.fetchAudios());
@@ -19,10 +15,14 @@ class Base extends Component {
     }
   }
 
-  onMoreClick = (done) => {
+  onMoreClick = (audios) => () => {
     const {audiosOffset} = this.state;
 
-    this.fetchAudios(audiosOffset + this.COUNT).then(() => done());
+    console.log('more click');
+
+    this.fetchAudios(audiosOffset + this.COUNT).then(() => {
+      console.log('more load');
+    });
   };
 }
 

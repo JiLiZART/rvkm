@@ -1,9 +1,9 @@
-import { createStore, applyMiddleware, compose } from 'redux';
-import { thunkMiddleware, promiseMiddleware } from 'middlewares';
+import {createStore, applyMiddleware, compose} from 'redux';
+import {thunkMiddleware, promiseMiddleware, loggerMiddleware} from 'middlewares';
 
 let finalCreateStore;
 
-const middlewares = applyMiddleware(promiseMiddleware, thunkMiddleware);
+const middlewares = applyMiddleware(promiseMiddleware, thunkMiddleware, loggerMiddleware);
 
 if (__DEVTOOLS__) {
   finalCreateStore = compose(
@@ -12,7 +12,7 @@ if (__DEVTOOLS__) {
   )(createStore);
 } else {
   finalCreateStore = compose(
-    middlewares,
+    middlewares
   )(createStore);
 }
 

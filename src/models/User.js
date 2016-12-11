@@ -41,6 +41,10 @@ export default class User {
     return this.fetching
   }
 
+  isLoggedIn() {
+    return this.id !== false
+  }
+
   haveError() {
     return !!this.error
   }
