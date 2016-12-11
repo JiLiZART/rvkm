@@ -61,7 +61,7 @@ class PaginationMore extends Component {
     let button;
 
     if (loading) {
-      button = (<Spinner size="lg" type="primary"/>);
+      button = (<Spinner size="l" type="primary"/>);
     } else {
       button = (<Button size="l" onClick={this.onMoreClick}>Показать еще</Button>)
     }

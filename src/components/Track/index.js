@@ -7,23 +7,17 @@ import './index.styl';
 import Icon from 'components/Icon';
 import Button from 'components/Button';
 
-import User from 'models/User';
-
 import {connect} from 'react-redux';
 import {add, remove} from 'actions/audios';
 
 const b = block('track');
 
-const mapStateToProps = (state) => ({
-  player: state.player.toJS(),
-  user: new User(state.user)
-});
+const pad = (val) => (val < 10 ? '0' + val : val);
 
 const formatDuration = (sec) => {
   const hours = parseInt(sec / 3600);
   const minutes = parseInt(sec / 60) % 60;
   const seconds = sec % 60;
-  const pad = (val) => (val < 10 ? '0' + val : val);
   let time = '';
 
   if (hours) time += pad(hours) + ':';
@@ -32,43 +26,59 @@ const formatDuration = (sec) => {
   return time + pad(seconds);
 };
 
+const downloadLink = (artist, song, url) => {
+  const icon = (<Icon name="file_download" size="s" light={true} style="blue"/>);
+
+  return (
+    <a href={url} download={`${artist} - ${song}.mp3`}>
+      <Button className={b('btn', {download: true})} size="s" view="plain" icon={icon}/>
+    </a>
+  );
+};
+
 class Track extends Component {
   constructor(props) {
     super(props);
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
   }
 
-  onRemoveClick = (audioID) => this.props.remove(audioID, this.user.getId());
+  shouldComponentUpdate(nextProps) {
+    const props = this.props;
 
-  onAddClick = (audioID) => this.props.add(audioID, this.user.getId());
+    return props.duration !== nextProps.duration
+      || props.id !== nextProps.id
+      || props.className !== nextProps.className;
+  }
+
+  onRemoveClick = (audioID) => this.props.onRemoveClick(audioID);
+
+  onAddClick = (audioID) => this.props.onAddClick(audioID);
 
   render() {
     const {className, size, artist, song, duration, id, url, canBeAdded, canBeRemoved} = this.props;
     const buttons = [];
 
-    if (canBeAdded) {
-      buttons.push(
-        <Button
-          className={b('btn', {add: true})}
-          onClick={() => this.onAddClick(id)}
-          size="s"
-          view="plain"
-          icon={<Icon name="add" size="s" light={true} style="blue"/>}
-        />
-      )
-    }
+    console.log('Track.render');
 
-    if (canBeRemoved) {
-      buttons.push(
-        <Button
-          className={b('btn', {add: true})}
-          onClick={() => this.onRemoveClick(id)}
-          size="s"
-          view="plain"
-          icon={<Icon name="clear" size="s" light={true} style="blue"/>}
-        />
-      )
-    }
+    canBeAdded && buttons.push(
+      <Button
+        className={b('btn', {add: true})}
+        onClick={() => this.onAddClick(id)}
+        size="s"
+        view="plain"
+        icon={<Icon name="add" size="s" light={true} style="blue"/>}
+      />
+    );
+
+    canBeRemoved && buttons.push(
+      <Button
+        className={b('btn', {add: true})}
+        onClick={() => this.onRemoveClick(id)}
+        size="s"
+        view="plain"
+        icon={<Icon name="clear" size="s" light={true} style="blue"/>}
+      />
+    );
 
     return (
       <div className={b({size}).mix(className)}>
@@ -83,9 +93,7 @@ class Track extends Component {
             <span className={b('duration')}>{formatDuration(duration)}</span>
             <span className={b('controls')}>
               {buttons}
-              <a href={url} download={`${artist} - ${song}.mp3`}>
-                <Button className={b('btn', {download: true})} size="s" view="plain" icon={<Icon name="file_download" size="s" light={true} style="blue"/>}/>
-              </a>
+              {downloadLink(artist, song, url)}
             </span>
           </span>
         </span>
@@ -94,7 +102,4 @@ class Track extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  {add, remove}
-)(Track);
+export default Track;

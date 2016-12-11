@@ -32,6 +32,8 @@ class App extends Component {
     const {children, user, player} = this.props;
     const loggedIn = user.isLoggedIn();
 
+    console.log('App.render');
+
     if (loggedIn) {
       return (
         <section className={app({player: !!player.audio.id})}>

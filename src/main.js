@@ -11,12 +11,12 @@ Api.appendScript();
 window.vkAsyncInit = function vkAsyncInit() {
   VK.init({apiId: '4966083'});
 
-  const store = configureStore(() => {
-    store.dispatch(init());
+  const store = configureStore();
 
-    render(
-      <Root store={store}/>,
-      document.getElementById('root')
-    );
-  });
+  store.dispatch(init());
+
+  render(
+    <Root store={store}/>,
+    document.getElementById('root')
+  );
 };

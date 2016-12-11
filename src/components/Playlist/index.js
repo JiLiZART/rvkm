@@ -1,4 +1,5 @@
 import React, {PureComponent} from 'react';
+import InfiniteScroll from 'redux-infinite-scroll';
 import block from 'bem-cn';
 import './index.styl';
 
@@ -6,7 +7,6 @@ import Track from 'components/Track';
 import Spinner from 'components/Spinner';
 import Error from 'components/Error';
 import PlayButton from 'components/PlayButton';
-import InfiniteScroll from 'redux-infinite-scroll';
 
 import User from 'models/User';
 import Audio from 'models/Audio';
@@ -35,7 +35,7 @@ const notSelectedMessage = () => (
 
 const loadingMessage = () => (
   <section className={b}>
-    <div className={b('loading')}><Spinner size="lg" type="primary"/></div>
+    <div className={b('loading')}><Spinner size="l" type="primary"/></div>
   </section>
 );
 
@@ -51,37 +51,46 @@ class Playlist extends PureComponent {
     const {player} = this.props;
     const isCurrent = player.audio.id === audio.getId();
     const isPlaying = player.playing;
+    const isFetching = player.audio.fetching;
     const duration = audio.getDuration();
 
     return (
       <div className={b('item', {current: isCurrent})} key={i}>
         <div className={b('controls')}>
-          <PlayButton className={b('play')} onClick={() => this.onTrackClick(audio)} playing={isCurrent && isPlaying} size="xs"/>
+          <PlayButton
+            className={b('play')}
+            onClick={() => this.onTrackClick(audio)}
+            playing={isCurrent && isPlaying}
+            loading={isCurrent && isFetching}
+            size="xs"/>
         </div>
-        <Track className={b('track')} size="m" id={audio.getId()} url={audio.getUrl()} duration={duration} artist={audio.getArtist()} song={audio.getSong()}/>
+        <Track
+          className={b('track')}
+          size="m"
+          id={audio.getId()}
+          url={audio.getUrl()}
+          duration={duration}
+          artist={audio.getArtist()}
+          song={audio.getSong()}/>
       </div>
     )
   };
 
-  onTrackClick = (audio) => {
-    const {loadAndPlay, play, pause, loadPlaylist, audios, player} = this.props;
+  onTrackClick = (track) => {
+    const {loadAndPlay, play, pause, loadPlaylist, audios, player:{audio, playlist, playing}} = this.props;
 
-    if (player.playlist.id !== audios.id) {
+    if (playlist.id !== audios.id) {
       loadPlaylist(audios);
     }
 
-    if (player.audio.id !== audio.id) {
-      loadAndPlay(audio);
+    if (audio.id !== track.id) {
+      loadAndPlay(track);
     } else {
-      if (player.playing) {
-        pause();
-      } else {
-        play();
-      }
+      playing ? pause() : play();
     }
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps) {
     const props = this.props;
 
     return props.audios !== nextProps.audios;
@@ -110,14 +119,18 @@ class Playlist extends PureComponent {
       return emptyMessage();
     }
 
-    return (<InfiniteScroll className={b}
-                            threshold={100}
-                            elementIsScrollable={false}
-                            loadingMore={audios.fetching}
-                            loadMore={onMore}
-                            showLoader={true}
-                            items={this._renderAudios()}
-                            hasMore={audios.count >= audios.items.length}/>);
+    if (onMore) {
+      return (<InfiniteScroll className={b}
+                              threshold={600}
+                              elementIsScrollable={false}
+                              loadingMore={audios.fetching}
+                              loadMore={onMore}
+                              showLoader={true}
+                              items={this._renderAudios()}
+                              hasMore={audios.count >= audios.offset}/>);
+    }
+
+    return (<section className={b}>{this._renderAudios()}</section>)
   }
 
   _renderAudios() {

@@ -6,16 +6,16 @@ export const playlist = createAction('PLAYER_PLAYLIST', (item) => item);
 
 export const initSuccess = createAction('PLAYER_INIT', (data) => data);
 
-export const loadStart = createAction('PLAYER_LOAD_FETCHING');
+export const loadStart = createAction('PLAYER_LOAD_FETCHING', (file) => file);
 export const loadSuccess = createAction('PLAYER_LOAD', (file) => file);
 export const loadError = createAction('PLAYER_LOAD_ERROR');
 export const seekSuccess = createAction('PLAYER_SEEK', (pos) => pos);
-export const playSuccess = createAction('PLAYER_PLAY');
-export const pauseSuccess = createAction('PLAYER_PAUSE');
+export const play = createAction('PLAYER_PLAY');
+export const pause = createAction('PLAYER_PAUSE');
 export const nextSuccess = createAction('PLAYER_NEXT', (player) => player);
 export const prevSuccess = createAction('PLAYER_PREV', (player) => player);
 export const progress = createAction('PLAYER_PROGRESS', (value) => value);
-export const volumeSuccess = createAction('PLAYER_VOLUME', (value) => value);
+export const volume = createAction('PLAYER_VOLUME', (value) => value);
 export const shuffleToggle = createAction('PLAYER_SHUFFLE', (value) => value);
 export const loopToggle = createAction('PLAYER_LOOP', (value) => value);
 export const playlistToggle = createAction('PLAYER_IN_PLAYLIST', (value) => value);
@@ -30,55 +30,42 @@ export function init() {
   };
 }
 
-function loadFromUrl(audio, done) {
-  Audio.getById(audio.id, audio.owner_id).then((items) => {
-    if (Array.isArray(items) && items.length) {
-      const item = items[0];
-
-      AudioPlayer.loadFromUrl(item.url).then(() => {
-        done(item);
-      });
-    }
-  });
-}
-
 export function load(audio) {
   return (dispatch) => {
-    loadFromUrl(audio, (item) => {
+    dispatch(loadStart(audio));
+    Audio.loadFromUrl(audio).then((item) => {
       dispatch(loadSuccess(item));
-    });
+    }, (err) => dispatch(loadError(err)));
   };
 }
 
 export function loadAndPlay(audio) {
   return (dispatch) => {
-    loadFromUrl(audio, (item) => {
+    dispatch(loadStart(audio));
+    Audio.loadFromUrl(audio).then((item) => {
       dispatch(loadSuccess(item));
       dispatch(play());
-    });
+    }, (err) => dispatch(loadError(err)));
   };
 }
 
-export function play() {
-  return (dispatch) => {
-    AudioPlayer.play();
-    dispatch(playSuccess());
-  };
-}
-
-export function volume(value) {
-  return (dispatch) => {
-    AudioPlayer.volume(value);
-    dispatch(volumeSuccess(value));
-  };
-}
-
-export function pause() {
-  return (dispatch) => {
-    AudioPlayer.pause();
-    dispatch(pauseSuccess());
-  };
-}
+// export function play() {
+//   return (dispatch) => {
+//     dispatch(playSuccess());
+//   };
+// }
+//
+// export function volume(value) {
+//   return (dispatch) => {
+//     dispatch(volumeSuccess(value));
+//   };
+// }
+//
+// export function pause() {
+//   return (dispatch) => {
+//     dispatch(pauseSuccess());
+//   };
+// }
 
 export function next(audio) {
   return (dispatch) => {
