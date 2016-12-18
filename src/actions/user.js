@@ -42,6 +42,6 @@ export function login() {
 export function logout() {
   return (dispatch) => {
     dispatch(logoutFetching());
-    return User.logout().then(() => dispatch(logoutSuccess()), (r) => dispatch(statusError(r)));
+    return User.logout().then(() => dispatch(logoutSuccess()), (r) => dispatch(logoutError(r)));
   }
 }
