@@ -1,1 +1,2 @@
-# Redux VKontakte player
+# Не поддерживается!
+# VK.com выключили поддержку Audio в Open API.
